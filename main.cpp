@@ -15,21 +15,25 @@
 //  vira
 //    #include <cstdio> // Em C++
 //
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <string>
+#include <windows.h>
 
 // Headers abaixo são específicos de C++
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 // Headers das bibliotecas OpenGL
-#include <glad/glad.h>   // Criação de contexto OpenGL 3.3
-#include <GLFW/glfw3.h>  // Criação de janelas do sistema operacional
+#include "include/glad.h"   // Criação de contexto OpenGL 3.3
+#include "include/glfw3.h"  // Criação de janelas do sistema operacional
 
 // Headers locais, definidos na pasta "include/"
-#include "utils.h"
+#include "include/utils.h"
 
 // Declaração de várias funções utilizadas em main().  Essas estão definidas
 // logo após a definição de main() neste arquivo.
@@ -524,9 +528,9 @@ void LoadShadersFromFiles()
     //       o-- shader_vertex.glsl
     //       |
     //       o-- shader_fragment.glsl
-    //
-    GLuint vertex_shader_id = LoadShader_Vertex("../../src/shader_vertex.glsl");
-    GLuint fragment_shader_id = LoadShader_Fragment("../../src/shader_fragment.glsl");
+
+    GLuint vertex_shader_id = LoadShader_Vertex("/src/shader_vertex.glsl");
+    GLuint fragment_shader_id = LoadShader_Fragment("/src/shader_fragment.glsl");
 
     // Deletamos o programa de GPU anterior, caso ele exista.
     if ( g_GpuProgramID != 0 )
