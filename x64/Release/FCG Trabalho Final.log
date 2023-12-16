@@ -1,0 +1,4 @@
+﻿  main.cpp
+C:\Users\leoto\Documents\Repo\INF01047-FCG-Trabalho-Final\main.cpp(450,31): warning C4101: 'e': variável local não referenciada
+LINK : warning LNK4075: ignorando '/INCREMENTAL' devido a especificação '/OPT:ICF'
+  FCG Trabalho Final.vcxproj -> C:\Users\leoto\Documents\Repo\INF01047-FCG-Trabalho-Final\x64\Release\FCG Trabalho Final.exe
