@@ -288,9 +288,10 @@ int main(int argc, char* argv[])
     //
     LoadShadersFromFiles();
 
-    // Carregamos duas imagens para serem utilizadas como textura
-    LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage0
-    LoadTextureImage("../../data/tc-earth_nightmap_citylights.gif"); // TextureImage1
+    // Texturas:
+    LoadTextureImage("../../data/textures/sun.jpg");      // TextureSun
+    LoadTextureImage("../../data/textures/mercury.jpg"); // TextureMercury
+    LoadTextureImage("../../data/textures/venus.jpg"); // TextureVenus
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
@@ -592,9 +593,9 @@ void LoadShadersFromFiles()
 
     // Variáveis em "shader_fragment.glsl" para acesso das imagens de textura
     glUseProgram(g_GpuProgramID);
-    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureImage0"), 0);
-    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureImage1"), 1);
-    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureImage2"), 2);
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureSun"), 0);
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureMercury"), 1);
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureVenus"), 2);
     glUseProgram(0);
 }
 
@@ -1132,7 +1133,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
     // Atualizamos a distância da câmera para a origem utilizando a
     // movimentação da "rodinha", simulando um ZOOM.
-    g_CameraDistance -= 2.0f*yoffset;
+    g_CameraDistance -= 8.0f*yoffset;
 
     // Uma câmera look-at nunca pode estar exatamente "em cima" do ponto para
     // onde ela está olhando, pois isto gera problemas de divisão por zero na

@@ -29,9 +29,9 @@ uniform vec4 bbox_min;
 uniform vec4 bbox_max;
 
 // Variáveis para acesso das imagens de textura
-uniform sampler2D TextureImage0;
-uniform sampler2D TextureImage1;
-uniform sampler2D TextureImage2;
+uniform sampler2D TextureSun;
+uniform sampler2D TextureMercury;
+uniform sampler2D TextureVenus;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec4 color;
@@ -73,6 +73,7 @@ void main()
     // Coordenadas de textura U e V
     float U = 0.0;
     float V = 0.0;
+    vec3 Kd0 = vec3(0.2,0.2,0.2);
 
     // Parâmetros que definem as propriedades espectrais da superfície
     vec3 Kd; // Refletância difusa
@@ -80,21 +81,25 @@ void main()
     vec3 Ka; // Refletância ambiente
     float q; // Expoente especular para o modelo de iluminação de Phong
 
+    U = texcoords.x;
+    V = texcoords.y;
+
+    vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
+
     if ( object_id == SOL )
     {
-        vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
+        Kd0 = texture(TextureSun, vec2(U,V)).rgb;
 
-        U = 1.0;
-        V = 1.0;
-
-        Kd = vec3(0.9,0.1,0.0);
+        Kd = vec3(1.0,1.0,0.0);
         Ks = vec3(0.0,0.0,0.0);
-        Ka = vec3(10.0,0.75,0.0);
+        Ka = vec3(1.0,1.0,0.0);
         q = 1.0;
     }
     else if ( object_id == MERCURIO )
     {
-        Kd = vec3(0.4,0.4,0.4);
+        Kd0 = texture(TextureMercury, vec2(U,V)).rgb;
+
+        Kd = vec3(0.8,0.8,0.8);
         Ks = vec3(0.2,0.2,0.2);
         Ka = vec3(0.0,0.0,0.0);
         q = 32.0;
@@ -118,18 +123,16 @@ void main()
     vec3 I = vec3(1.0,1.0,1.0); // PREENCH AQUI o espectro da fonte de luz
 
     // Espectro da luz ambiente
-    vec3 Ia = vec3(0.2,0.2,0.2); // PREENCHA AQUI o espectro da luz ambiente
+    vec3 Ia = vec3(0.1,0.1,0.1); // PREENCHA AQUI o espectro da luz ambiente
 
     // Termo difuso utilizando a lei dos cossenos de Lambert
     float lambert_diffuse_term = max(0,dot(n,l));
 
     // Termo ambiente
-    vec3 ambient_term = vec3(1.0,1.0,1.0); // PREENCHA AQUI o termo ambiente
+    vec3 ambient_term = vec3(0.1,0.1,0.1); // PREENCHA AQUI o termo ambiente
 
     // Termo especular utilizando o modelo de iluminação de Phong
     float phong_specular_term  = pow(max(0,dot(r,v)),q); // PREENCH AQUI o termo especular de Phong
-
-    vec3 Kd0 = texture(TextureImage0, vec2(U,V)).rgb;
 
     // NOTE: Se você quiser fazer o rendering de objetos transparentes, é
     // necessário:
@@ -147,7 +150,11 @@ void main()
 
     // Cor final do fragmento calculada com uma combinação dos termos difuso,
     // especular, e ambiente. Veja slide 129 do documento Aula_17_e_18_Modelos_de_Iluminacao.pdf.
-    color.rgb = Kd0 * (lambert_diffuse_term * I* Kd) + (ambient_term * Ia * Ka) + (phong_specular_term * I * Ks);
+
+    if ( object_id == SOL ) // Sol não possui iluminação externa por si proprio emitir luz, então precisamos compensar por isso
+        color.rgb = Kd0 + (lambert_diffuse_term * I * Kd) + (ambient_term * Ia * Ka) + (phong_specular_term * I * Ks);
+    else
+        color.rgb = Kd0 * (lambert_diffuse_term * I * Kd) + (ambient_term * Ia * Ka) + (phong_specular_term * I * Ks);
 
     // Cor final com correção gamma, considerando monitor sRGB.
     // Veja https://en.wikipedia.org/w/index.php?title=Gamma_correction&oldid=751281772#Windows.2C_Mac.2C_sRGB_and_TV.2Fvideo_standard_gammas
