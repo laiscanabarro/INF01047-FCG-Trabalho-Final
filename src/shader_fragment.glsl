@@ -36,7 +36,7 @@ void main()
     vec4 p = position_world;
 
     // habemus lux:
-    vec4 lightDir = normalize(camera_position - position_world);
+    vec4 lightDir = normalize(origin - position_world);
 
     // Normal do fragmento atual, interpolada pelo rasterizador a partir das
     // normais de cada vértice.
@@ -61,9 +61,9 @@ void main()
     {
         // PREENCHA AQUI
         // Propriedades espectrais da esfera
-        Kd = vec3(0.8,0.4,0.08);
+        Kd = vec3(0.9,0.1,0.0);
         Ks = vec3(0.0,0.0,0.0);
-        Ka = vec3(0.4,0.2,0.04);
+        Ka = vec3(0.0,0.0,0.0);
         q = 1.0;
     }
     else if ( object_id == MERCURIO )

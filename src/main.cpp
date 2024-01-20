@@ -181,7 +181,7 @@ bool g_MiddleMouseButtonPressed = false; // Análogo para botão do meio do mouse
 // renderização.
 float g_CameraTheta = 0.0f; // Ângulo no plano ZX em relação ao eixo Z
 float g_CameraPhi = 0.0f;   // Ângulo em relação ao eixo Y
-float g_CameraDistance = 3.5f; // Distância da câmera para a origem
+float g_CameraDistance = 240.0f; // Distância da câmera para a origem
 
 // Variáveis que controlam rotação do antebraço
 float g_ForearmAngleZ = 0.0f;
@@ -356,7 +356,7 @@ int main(int argc, char* argv[])
         // Note que, no sistema de coordenadas da câmera, os planos near e far
         // estão no sentido negativo! Veja slides 176-204 do documento Aula_09_Projecoes.pdf.
         float nearplane = -0.1f;  // Posição do "near plane"
-        float farplane  = -10.0f; // Posição do "far plane"
+        float farplane  = -10000.0f; // Posição do "far plane"
 
         if (g_UsePerspectiveProjection)
         {
@@ -391,23 +391,26 @@ int main(int argc, char* argv[])
         #define MERCURIO    1
         #define VENUS       2
 
-        float tamanhoSol = 1.5f;
-        float tamanhoMercurio = 1.0f;
+        // Conversão de tamanhos: 1.0f = 1.000 KM
+        float tamanhoSol = 28.0f; // Tamanho: 1.400.000 KM (O sol terá que ser diminuido 98% de tamanho para caber na projeção)
+        float tamanhoMercurio = 4.8f; // Tamanho: 4.879 KM
+
+        // Conversão de distancias: 1.0f = 1.000.000 KM
+        float distanciaMercurio = 58.0f + tamanhoSol/2 + tamanhoMercurio/2; // Distancia do Sol: 58.000.000 + 1/2 diametro do sol + 1/2 diametro de Mercurio
 
         // Sol:
-
-        model = Matrix_Translate(-8.0f,0.0f,0.0f);
-//        model = Matrix_Scale(tamanhoSol,tamanhoSol,tamanhoSol); // Aumenta o objeto
+        // Centro da projeção
+        model = Matrix_Translate(-5.0f,0.0f,0.0f) // Posiciona o objeto
+                * Matrix_Scale(tamanhoSol,tamanhoSol,tamanhoSol); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, SOL);
         DrawVirtualObject("the_sphere");
 
-        // Desenhamos outra esfera à direita um pouco maior
-
-        model = Matrix_Translate(4.0f,0.0f,0.0f); // Move à direita
-        model = Matrix_Scale(tamanhoMercurio,tamanhoMercurio,tamanhoMercurio); // Aumenta o objeto
+        // Mercurio:
+        model = Matrix_Translate(distanciaMercurio,0.0f,0.0f) // Posiciona o objeto
+                * Matrix_Scale(tamanhoMercurio,tamanhoMercurio,tamanhoMercurio); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(g_object_id_uniform, SOL);
+        glUniform1i(g_object_id_uniform, MERCURIO);
         DrawVirtualObject("the_sphere");
 
 
@@ -1030,7 +1033,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
     // Atualizamos a distância da câmera para a origem utilizando a
     // movimentação da "rodinha", simulando um ZOOM.
-    g_CameraDistance -= 0.1f*yoffset;
+    g_CameraDistance -= 2.0f*yoffset;
 
     // Uma câmera look-at nunca pode estar exatamente "em cima" do ponto para
     // onde ela está olhando, pois isto gera problemas de divisão por zero na
