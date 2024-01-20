@@ -1569,7 +1569,7 @@
 	<array>
 	"mapbox/earcut.hpp"
 
-1705776492 source:c:\users\leoto\documents\repo\inf01047-fcg-trabalho-final\src\main.cpp
+1705778332 source:c:\users\leoto\documents\repo\inf01047-fcg-trabalho-final\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -1588,6 +1588,7 @@
 	<glm/vec4.hpp>
 	<glm/gtc/type_ptr.hpp>
 	<tiny_obj_loader.h>
+	<stb_image.h>
 	"utils.h"
 	"matrices.h"
 
@@ -1856,4 +1857,20 @@
 	<glm/mat4x4.hpp>
 	<glm/vec4.hpp>
 	<glm/gtc/matrix_transform.hpp>
+
+1705777035 c:\users\leoto\documents\repo\inf01047-fcg-trabalho-final\include\stb_image.h
+	"stb_image.h"
+	<stdio.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<assert.h>
+	<stdint.h>
+	<emmintrin.h>
+	<intrin.h>
+	<arm_neon.h>
 

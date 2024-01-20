@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Laboratorio_4" />
+		<Option title="Trabalho_Final_FCG" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -378,9 +378,6 @@
 		<Unit filename="src/textrendering.cpp" />
 		<Unit filename="src/tiny_obj_loader.cpp" />
 		<Extensions>
-			<code_completion />
-			<envvars />
-			<debugger />
 			<lib_finder disable_auto="1" />
 		</Extensions>
 	</Project>
