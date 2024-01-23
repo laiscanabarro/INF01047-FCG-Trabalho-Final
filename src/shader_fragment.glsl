@@ -22,6 +22,9 @@ uniform mat4 projection;
 #define SOL         0
 #define MERCURIO    1
 #define VENUS       2
+#define TERRA       3
+#define MARTE       4
+#define JUPITER     5
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -32,6 +35,9 @@ uniform vec4 bbox_max;
 uniform sampler2D TextureSun;
 uniform sampler2D TextureMercury;
 uniform sampler2D TextureVenus;
+uniform sampler2D TextureEarth;
+uniform sampler2D TextureMars;
+uniform sampler2D TextureJupiter;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec4 color;
@@ -95,28 +101,28 @@ void main()
         Ka = vec3(1.0,1.0,0.0);
         q = 1.0;
     }
-    else if ( object_id == MERCURIO )
-    {
-        Kd0 = texture(TextureMercury, vec2(U,V)).rgb;
+    else {
+
+        // Valores para todos os planetas:
 
         Kd = vec3(0.8,0.8,0.8);
         Ks = vec3(0.2,0.2,0.2);
         Ka = vec3(0.0,0.0,0.0);
         q = 32.0;
-    }
-    else if ( object_id == VENUS )
-    {
-        Kd = vec3(0.2,0.2,0.2);
-        Ks = vec3(0.3,0.3,0.3);
-        Ka = vec3(0.0,0.0,0.0);
-        q = 20.0;
-    }
-    else // Objeto desconhecido = preto
-    {
-        Kd = vec3(0.0,0.0,0.0);
-        Ks = vec3(0.0,0.0,0.0);
-        Ka = vec3(0.0,0.0,0.0);
-        q = 1.0;
+        
+        if (object_id == MERCURIO)
+            {Kd0 = texture(TextureMercury, vec2(U,V)).rgb;}
+        else if (object_id == VENUS)
+            {Kd0 = texture(TextureVenus, vec2(U,V)).rgb;}
+        else if (object_id == TERRA)
+            {Kd0 = texture(TextureEarth, vec2(U,V)).rgb;}
+        else // Objeto desconhecido = preto
+        {
+            Kd = vec3(0.0,0.0,0.0);
+            Ks = vec3(0.0,0.0,0.0);
+            Ka = vec3(0.0,0.0,0.0);
+            q = 1.0;
+        }
     }
 
     // Espectro da fonte de iluminação

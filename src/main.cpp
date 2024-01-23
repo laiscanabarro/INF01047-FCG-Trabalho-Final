@@ -85,7 +85,6 @@ struct ObjModel
                 fprintf(stderr,
                         "*********************************************\n"
                         "Erro: Objeto sem nome dentro do arquivo '%s'.\n"
-                        "Veja https://www.inf.ufrgs.br/~eslgastal/fcg-faq-etc.html#Modelos-3D-no-formato-OBJ .\n"
                         "*********************************************\n",
                     filename);
                 throw std::runtime_error("Objeto sem nome.");
@@ -292,6 +291,7 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/textures/sun.jpg");      // TextureSun
     LoadTextureImage("../../data/textures/mercury.jpg"); // TextureMercury
     LoadTextureImage("../../data/textures/venus.jpg"); // TextureVenus
+    LoadTextureImage("../../data/textures/earth.jpg"); // TextureEarth
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
@@ -406,13 +406,20 @@ int main(int argc, char* argv[])
         #define SOL         0
         #define MERCURIO    1
         #define VENUS       2
+        #define TERRA       3
+        #define MARTE       4
+        #define JUPITER     5
 
         // Conversão de tamanhos: 1.0f = 1.000 KM
-        float tamanhoSol = 28.0f; // Tamanho: 1.400.000 KM (O sol terá que ser diminuido 98% de tamanho para caber na projeção)
-        float tamanhoMercurio = 4.8f; // Tamanho: 4.879 KM
+        float tamanhoSol = 28.0f; // Diâmetro: 1.400.000 KM (O sol terá que ser diminuido 98% de tamanho para caber na projeção)
+        float tamanhoMercurio = 4.8f; // Diâmetro: 4.879 KM
+        float tamanhoVenus = 12.104f; // Diâmetro: 12.104 KM
+        float tamanhoTerra = 12.742f; // Diâmetro: 12.742 KM
 
         // Conversão de distancias: 1.0f = 1.000.000 KM
-        float distanciaMercurio = 58.0f + tamanhoSol/2 + tamanhoMercurio/2; // Distancia do Sol: 58.000.000 + 1/2 diametro do sol + 1/2 diametro de Mercurio
+        float distanciaMercurioX = 58.0f + tamanhoSol/2 + tamanhoMercurio/2; // Distancia do Sol: 58.000.000 + 1/2 diametro do Sol + 1/2 diametro de Mercurio
+        float distanciaVenusX = distanciaMercurioX + 50.0f + tamanhoMercurio/2 + tamanhoVenus/2; // Distancia de Mercurio: 50.000.000 + 1/2 diametro de Mercurio + 1/2 diametro de Venus
+        float distanciaTerraX = distanciaVenusX + 61.0f + tamanhoVenus/2 + tamanhoTerra/2; // Distancia da terra
 
         // Sol:
         // Centro da projeção
@@ -423,10 +430,24 @@ int main(int argc, char* argv[])
         DrawVirtualObject("the_sphere");
 
         // Mercurio:
-        model = Matrix_Translate(distanciaMercurio,0.0f,0.0f) // Posiciona o objeto
+        model = Matrix_Translate(distanciaMercurioX,0.0f,0.0f) // Posiciona o objeto
                 * Matrix_Scale(tamanhoMercurio,tamanhoMercurio,tamanhoMercurio); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, MERCURIO);
+        DrawVirtualObject("the_sphere");
+
+        // Venus:
+        model = Matrix_Translate(distanciaVenusX,0.0f,0.0f) // Posiciona o objeto
+                * Matrix_Scale(tamanhoVenus,tamanhoVenus,tamanhoVenus); // Aumenta o objeto
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform, VENUS);
+        DrawVirtualObject("the_sphere");
+
+        // Terra:
+        model = Matrix_Translate(distanciaTerraX,0.0f,0.0f) // Posiciona o objeto
+                * Matrix_Scale(tamanhoTerra,tamanhoTerra,tamanhoTerra); // Aumenta o objeto
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform, TERRA);
         DrawVirtualObject("the_sphere");
 
 
@@ -596,6 +617,9 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureSun"), 0);
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureMercury"), 1);
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureVenus"), 2);
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureEarth"), 3);
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureMars"), 4);
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureJupiter"), 5);
     glUseProgram(0);
 }
 
