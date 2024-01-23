@@ -106,6 +106,8 @@ void main()
     }
     else if ( object_id == VENUS )
     {
+        Kd0 = texture(TextureVenus, vec2(U,V)).rgb;
+
         Kd = vec3(0.2,0.2,0.2);
         Ks = vec3(0.3,0.3,0.3);
         Ka = vec3(0.0,0.0,0.0);

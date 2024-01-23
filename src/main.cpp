@@ -85,7 +85,6 @@ struct ObjModel
                 fprintf(stderr,
                         "*********************************************\n"
                         "Erro: Objeto sem nome dentro do arquivo '%s'.\n"
-                        "Veja https://www.inf.ufrgs.br/~eslgastal/fcg-faq-etc.html#Modelos-3D-no-formato-OBJ .\n"
                         "*********************************************\n",
                     filename);
                 throw std::runtime_error("Objeto sem nome.");
@@ -410,9 +409,11 @@ int main(int argc, char* argv[])
         // Conversão de tamanhos: 1.0f = 1.000 KM
         float tamanhoSol = 28.0f; // Tamanho: 1.400.000 KM (O sol terá que ser diminuido 98% de tamanho para caber na projeção)
         float tamanhoMercurio = 4.8f; // Tamanho: 4.879 KM
+        float tamanhoVenus = 12.104f; // Tamanho: 12.104 KM
 
         // Conversão de distancias: 1.0f = 1.000.000 KM
-        float distanciaMercurio = 58.0f + tamanhoSol/2 + tamanhoMercurio/2; // Distancia do Sol: 58.000.000 + 1/2 diametro do sol + 1/2 diametro de Mercurio
+        float distanciaMercurioX = 58.0f + tamanhoSol/2 + tamanhoMercurio/2; // Distancia do Sol: 58.000.000 + 1/2 diametro do Sol + 1/2 diametro de Mercurio
+        float distanciaVenusX = distanciaMercurioX + 50.0f + tamanhoMercurio/2 + tamanhoVenus/2; // Distancia de Mercurio: 50.000.000 + 1/2 diametro de Mercurio + 1/2 diametro de Venus
 
         // Sol:
         // Centro da projeção
@@ -423,10 +424,17 @@ int main(int argc, char* argv[])
         DrawVirtualObject("the_sphere");
 
         // Mercurio:
-        model = Matrix_Translate(distanciaMercurio,0.0f,0.0f) // Posiciona o objeto
+        model = Matrix_Translate(distanciaMercurioX,0.0f,0.0f) // Posiciona o objeto
                 * Matrix_Scale(tamanhoMercurio,tamanhoMercurio,tamanhoMercurio); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, MERCURIO);
+        DrawVirtualObject("the_sphere");
+
+        // Mercurio:
+        model = Matrix_Translate(distanciaVenusX,0.0f,0.0f) // Posiciona o objeto
+                * Matrix_Scale(tamanhoVenus,tamanhoVenus,tamanhoVenus); // Aumenta o objeto
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform, VENUS);
         DrawVirtualObject("the_sphere");
 
 
