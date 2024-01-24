@@ -8,6 +8,8 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
+
 
 // Headers abaixo são específicos de C++
 #include <map>
@@ -141,6 +143,11 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+
+
+GLuint LoadCubemap(const std::vector<std::string>& faces);
+void BuildSkyboxAndAddToVirtualScene(GLuint skyboxTexture);
+
 
 // Definimos uma estrutura que armazenará dados necessários para renderizar
 // cada objeto da cena virtual.
@@ -306,20 +313,24 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/textures/venus.jpg"); // TextureVenus
     LoadTextureImage("../../data/textures/earth.jpg"); // TextureEarth
 
+    // Cubemap com seis texturas para cada face do cubo
+    std::vector<std::string> faces = {
+        "../../data/skybox/right_sky.jpg",
+        "../../data/skybox/left_sky.jpg",
+        "../../data/skybox/top_sky.jpg",
+        "../../data/skybox/bottom_sky.jpg",
+        "../../data/skybox/front_sky.jpg",
+        "../../data/skybox/back_sky.jpg"
+    };
+
+    GLuint skyboxTexture = LoadCubemap(faces);
+    BuildSkyboxAndAddToVirtualScene(skyboxTexture);
+
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
     ComputeNormals(&spheremodel);
     BuildTrianglesAndAddToVirtualScene(&spheremodel);
 
-/*
-    ObjModel bunnymodel("../../data/bunny.obj");
-    ComputeNormals(&bunnymodel);
-    BuildTrianglesAndAddToVirtualScene(&bunnymodel);
-
-    ObjModel planemodel("../../data/plane.obj");
-    ComputeNormals(&planemodel);
-    BuildTrianglesAndAddToVirtualScene(&planemodel);
-*/
 
     if ( argc > 1 )
     {
@@ -341,6 +352,7 @@ int main(int argc, char* argv[])
     // Propriedades da camera
     float speed = 100.0f; // Velocidade da câmera
     float prev_time = (float)glfwGetTime();
+
 
     // Ficamos em um loop infinito, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window))
@@ -470,7 +482,6 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, TERRA);
         DrawVirtualObject("the_sphere");
-
 
         // Imprimimos na tela os ângulos de Euler que controlam a rotação do
         // terceiro cubo.
@@ -667,7 +678,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureEarth"), 3);
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureMars"), 4);
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureJupiter"), 5);
-    glUseProgram(0);
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureSky"), 6);
 }
 
 // Função que pega a matriz M e guarda a mesma no topo da pilha
@@ -1670,6 +1681,72 @@ void PrintObjModelInfo(ObjModel* model)
     printf("\n");
   }
 }
+
+GLuint LoadCubemap(const std::vector<std::string>& faces) {
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+    int width, height, nrChannels;
+    for (GLuint i = 0; i < faces.size(); i++)
+    {
+        unsigned char *data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            stbi_image_free(data);
+        }
+        else
+        {
+            std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+            stbi_image_free(data);
+        }
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    return textureID;
+}
+
+void BuildSkyboxAndAddToVirtualScene(GLuint skyboxTexture) {
+    // Define os vértices da Skybox
+    GLfloat skyboxVertices[] = {
+        // Posições
+        -1.0f, 1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, 1.0f, -1.0f,
+        -1.0f, 1.0f, -1.0f,
+
+        // ... (outros lados da Skybox)
+
+    };
+
+    // Cria um VAO e VBO para a Skybox
+    GLuint skyboxVAO, skyboxVBO;
+    glGenVertexArrays(1, &skyboxVAO);
+    glGenBuffers(1, &skyboxVBO);
+
+    // Configura o VAO e VBO da Skybox
+    glBindVertexArray(skyboxVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glBindVertexArray(0);
+
+    // Adiciona a Skybox à cena virtual
+    g_VirtualScene["skybox"].vertex_array_object_id = skyboxVAO;
+    g_VirtualScene["skybox"].num_indices = sizeof(skyboxVertices) / (3 * sizeof(GLfloat));
+    g_VirtualScene["skybox"].rendering_mode = GL_TRIANGLES;
+}
+
+
+
 
 // set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null
 // vim: set spell spelllang=pt_br :
