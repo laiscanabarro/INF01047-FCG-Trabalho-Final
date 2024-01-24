@@ -186,6 +186,10 @@ bool g_APressed = false;
 bool g_SPressed = false;
 bool g_DPressed = false;
 
+// Variaveis de UP or DOWN da camera
+bool g_SpacePressed = false;
+bool g_ShiftPressed = false;
+
 // Variáveis que definem a câmera em coordenadas esféricas, controladas pelo
 // usuário através do mouse (veja função CursorPosCallback()). A posição
 // efetiva da câmera é calculada dentro da função main(), dentro do loop de
@@ -353,7 +357,7 @@ int main(int argc, char* argv[])
         // Conversaremos sobre sistemas de cores nas aulas de Modelos de Iluminação.
         //
         //           R     G     B     A
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
 
         // "Pintamos" todos os pixels do framebuffer com a cor definida acima,
         // e também resetamos todos os pixels do Z-buffer (depth buffer).
@@ -507,6 +511,16 @@ int main(int argc, char* argv[])
         if (g_DPressed)
         {
             camera_movement += vetor_u * speed * delta_t;
+        }
+
+        if (g_SpacePressed)
+        {
+            camera_movement += camera_up_vector * speed * delta_t;
+        }
+
+        if (g_ShiftPressed)
+        {
+            camera_movement += -camera_up_vector * speed * delta_t;
         }
 
         // O framebuffer onde OpenGL executa as operações de renderização não
@@ -1256,8 +1270,8 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         g_AngleZ += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
     }
 
-    // Se o usuário apertar a tecla espaço, resetamos os ângulos de Euler para zero.
-    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+    // Se o usuário apertar a tecla L, resetamos os ângulos de Euler para zero.
+    if (key == GLFW_KEY_L && action == GLFW_PRESS)
     {
         g_AngleX = 0.0f;
         g_AngleY = 0.0f;
@@ -1365,6 +1379,42 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
             // necessariamente deve ter ocorrido um evento PRESS.
             ;
 
+    }
+
+    if (key == GLFW_KEY_SPACE)
+    {
+        if (action == GLFW_PRESS)
+            // Usuário apertou a tecla de espaço, então atualizamos o estado para pressionada
+            g_SpacePressed = true;
+
+        else if (action == GLFW_RELEASE)
+            // Usuário largou a tecla de espaço, então atualizamos o estado para NÃO pressionada
+            g_SpacePressed = false;
+
+        else if (action == GLFW_REPEAT)
+            // Usuário está segurando a tecla espaço e o sistema operacional está
+            // disparando eventos de repetição. Neste caso, não precisamos
+            // atualizar o estado da tecla, pois antes de um evento REPEAT
+            // necessariamente deve ter ocorrido um evento PRESS.
+            ;
+    }
+
+    if (key == GLFW_KEY_LEFT_SHIFT)
+    {
+        if (action == GLFW_PRESS)
+            // Usuário apertou a tecla Shift, então atualizamos o estado para pressionada
+            g_ShiftPressed = true;
+
+        else if (action == GLFW_RELEASE)
+            // Usuário largou a tecla Shift, então atualizamos o estado para NÃO pressionada
+            g_ShiftPressed = false;
+
+        else if (action == GLFW_REPEAT)
+            // Usuário está segurando a tecla Shift e o sistema operacional está
+            // disparando eventos de repetição. Neste caso, não precisamos
+            // atualizar o estado da tecla, pois antes de um evento REPEAT
+            // necessariamente deve ter ocorrido um evento PRESS.
+            ;
     }
 }
 
