@@ -456,6 +456,9 @@ int main(int argc, char* argv[])
 
         // Mercurio:
         model = Matrix_Translate(distanciaMercurioX,0.0f,0.0f) // Posiciona o objeto
+                * Matrix_Rotate_Z(0.6f)
+                * Matrix_Rotate_X(0.2f)
+                * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
                 * Matrix_Scale(tamanhoMercurio,tamanhoMercurio,tamanhoMercurio); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, MERCURIO);
@@ -463,6 +466,9 @@ int main(int argc, char* argv[])
 
         // Venus:
         model = Matrix_Translate(distanciaVenusX,0.0f,0.0f) // Posiciona o objeto
+                * Matrix_Rotate_Z(0.6f)
+                * Matrix_Rotate_X(0.2f)
+                * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
                 * Matrix_Scale(tamanhoVenus,tamanhoVenus,tamanhoVenus); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, VENUS);
@@ -470,6 +476,9 @@ int main(int argc, char* argv[])
 
         // Terra:
         model = Matrix_Translate(distanciaTerraX,0.0f,0.0f) // Posiciona o objeto
+                * Matrix_Rotate_Z(0.6f)
+                * Matrix_Rotate_X(0.2f)
+                * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
                 * Matrix_Scale(tamanhoTerra,tamanhoTerra,tamanhoTerra); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, TERRA);
