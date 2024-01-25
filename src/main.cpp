@@ -39,6 +39,10 @@
 #include "utils.h"
 #include "matrices.h"
 
+#include <GL/gl.h>
+#include <GL/glu.h>
+
+
 // Estrutura que representa um modelo geométrico carregado a partir de um
 // arquivo ".obj". Veja https://en.wikipedia.org/wiki/Wavefront_.obj_file .
 struct ObjModel
@@ -142,6 +146,8 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
+void drawStar();
+
 // Definimos uma estrutura que armazenará dados necessários para renderizar
 // cada objeto da cena virtual.
 struct SceneObject
@@ -231,6 +237,8 @@ float f_z = f_r*cos(g_CameraPhi)*cos(g_CameraTheta);
 float f_x = f_r*cos(g_CameraPhi)*sin(g_CameraTheta);
 glm::vec4 camera_movement = glm::vec4(0.0f,0.0f,0.0f,0.0f);
 
+float angle=0.0;
+
 int main(int argc, char* argv[])
 {
     // Inicializamos a biblioteca GLFW, utilizada para criar uma janela do
@@ -314,16 +322,6 @@ int main(int argc, char* argv[])
     ObjModel spheremodel("../../data/sphere.obj");
     ComputeNormals(&spheremodel);
     BuildTrianglesAndAddToVirtualScene(&spheremodel);
-
-/*
-    ObjModel bunnymodel("../../data/bunny.obj");
-    ComputeNormals(&bunnymodel);
-    BuildTrianglesAndAddToVirtualScene(&bunnymodel);
-
-    ObjModel planemodel("../../data/plane.obj");
-    ComputeNormals(&planemodel);
-    BuildTrianglesAndAddToVirtualScene(&planemodel);
-*/
 
     if ( argc > 1 )
     {
@@ -446,6 +444,8 @@ int main(int argc, char* argv[])
         float distanciaVenusX = distanciaMercurioX + 50.0f + tamanhoMercurio/2 + tamanhoVenus/2; // Distancia de Mercurio: 50.000.000 + 1/2 diametro de Mercurio + 1/2 diametro de Venus
         float distanciaTerraX = distanciaVenusX + 61.0f + tamanhoVenus/2 + tamanhoTerra/2; // Distancia da terra
 
+        float angularSpeed; // Ajuste a velocidade angular conforme para translação dos planetas
+
         // Sol:
         // Centro da projeção
         model = Matrix_Translate(-5.0f,0.0f,0.0f) // Posiciona o objeto
@@ -455,7 +455,9 @@ int main(int argc, char* argv[])
         DrawVirtualObject("the_sphere");
 
         // Mercurio:
-        model = Matrix_Translate(distanciaMercurioX,0.0f,0.0f) // Posiciona o objeto
+        angularSpeed = 1.0f; // Ajuste a velocidade angular conforme necessário
+        // Posiciona o objeto em uma órbita circular
+        model = Matrix_Translate(distanciaMercurioX * cos(angularSpeed * glfwGetTime()), 0.0f, distanciaMercurioX * sin(angularSpeed * glfwGetTime()))
                 * Matrix_Rotate_Z(0.6f)
                 * Matrix_Rotate_X(0.2f)
                 * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
@@ -465,7 +467,9 @@ int main(int argc, char* argv[])
         DrawVirtualObject("the_sphere");
 
         // Venus:
-        model = Matrix_Translate(distanciaVenusX,0.0f,0.0f) // Posiciona o objeto
+        angularSpeed = 0.5f;
+        // Posiciona o objeto em uma órbita circular
+        model = Matrix_Translate(distanciaVenusX * cos(angularSpeed * glfwGetTime()), 0.0f, distanciaVenusX * sin(angularSpeed * glfwGetTime())) /
                 * Matrix_Rotate_Z(0.6f)
                 * Matrix_Rotate_X(0.2f)
                 * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
@@ -475,8 +479,9 @@ int main(int argc, char* argv[])
         DrawVirtualObject("the_sphere");
 
         // Terra:
-        model = Matrix_Translate(distanciaTerraX,0.0f,0.0f) // Posiciona o objeto
-                * Matrix_Rotate_Z(0.6f)
+        angularSpeed = 0.8f;
+        // Posiciona o objeto em uma órbita circular
+        model = Matrix_Translate(distanciaTerraX * cos(angularSpeed * glfwGetTime()), 0.0f, distanciaTerraX * sin(angularSpeed * glfwGetTime()))
                 * Matrix_Rotate_X(0.2f)
                 * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
                 * Matrix_Scale(tamanhoTerra,tamanhoTerra,tamanhoTerra); // Aumenta o objeto
@@ -1728,6 +1733,51 @@ void PrintObjModelInfo(ObjModel* model)
     }
     printf("\n");
   }
+}
+
+
+void drawStar() {
+    //white color
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glBegin(GL_POINTS);
+
+	glVertex3f(-10.0f, -3.0f, 0.0f);
+	glVertex3f(-12.0f, -3.0f, 0.0f);
+	glVertex3f(-14.0f, -3.0f, 0.0f);
+
+	glVertex3f(2.0f, 2.0f, 0.0f);
+	glVertex3f(3.0f, 3.0f, 0.0f);
+    glVertex3f(3.0f, 4.0f, 0.0f);
+    glVertex3f(2.0f, 4.0f, 0.0f);
+    glVertex3f(3.0f, 32.0f, 0.0f);
+    glVertex3f(3.0f, 5.0f, 0.0f);
+    glVertex3f(3.0f, 6.0f, 0.0f);
+    glVertex3f(2.0f, 5.0f, 0.0f);
+    glVertex3f(3.0f, 4.0f, 0.0f);
+    glVertex3f(2.0f, 4.0f, 0.0f);
+    glVertex3f(3.0f, 6.0f, 0.0f);
+    glVertex3f(4.0f, 1.0f, 0.0f);
+    glVertex3f(6.0f, 1.0f, 0.0f);
+    glVertex3f(8.0f, .0f, 0.0f);
+    glVertex3f(3.0f, 6.0f, 0.0f);
+    glVertex3f(4.0f, 1.0f, 0.0f);
+    glVertex3f(6.0f, 1.0f, 0.0f);
+    glVertex3f(8.0f, .0f, 0.0f);
+    glVertex3f(6.0f, -1.0f, 0.0f);
+    glVertex3f(8.0f, -1.0f, 0.0f);
+    glVertex3f(-10.0f, 3.0f, 0.0f);
+	glVertex3f(-12.0f, 3.0f, 0.0f);
+	glVertex3f(-14.0f, -3.0f, 0.0f);
+	glVertex3f(-10.0f, 4.0f, 0.0f);
+	glVertex3f(-12.0f, 5.0f, 0.0f);
+	glVertex3f(-14.0f, 6.0f, 0.0f);
+	glVertex3f(-15.0f, 4.0f, 0.0f);
+	glVertex3f(-13.0f, 5.0f, 0.0f);
+	glVertex3f(-11.0f, 6.0f, 0.0f);
+
+
+    glEnd();
+    angle+=0.1f;
 }
 
 // set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null
