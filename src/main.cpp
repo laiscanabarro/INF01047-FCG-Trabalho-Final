@@ -444,7 +444,8 @@ int main(int argc, char* argv[])
         float distanciaVenusX = distanciaMercurioX + 50.0f + tamanhoMercurio/2 + tamanhoVenus/2; // Distancia de Mercurio: 50.000.000 + 1/2 diametro de Mercurio + 1/2 diametro de Venus
         float distanciaTerraX = distanciaVenusX + 61.0f + tamanhoVenus/2 + tamanhoTerra/2; // Distancia da terra
 
-        float angularSpeed; // Ajuste a velocidade angular conforme para translação dos planetas
+        float angularSpeed; // Velocidade angular para translação dos planetas
+        float anglePlanet;  // Ângulo da posição dos planetas ao longo da suas órbitas
 
         // Sol:
         // Centro da projeção
@@ -455,9 +456,10 @@ int main(int argc, char* argv[])
         DrawVirtualObject("the_sphere");
 
         // Mercurio:
-        angularSpeed = 1.0f; // Ajuste a velocidade angular conforme necessário
+        angularSpeed = 47.87f / distanciaMercurioX;    // Velocidade angular
+        anglePlanet = angularSpeed * glfwGetTime();    // Ângulo da posição do planeta ao longo da órbita
         // Posiciona o objeto em uma órbita circular
-        model = Matrix_Translate(distanciaMercurioX * cos(angularSpeed * glfwGetTime()), 0.0f, distanciaMercurioX * sin(angularSpeed * glfwGetTime()))
+        model = Matrix_Translate(distanciaMercurioX * cos(anglePlanet), 0.0f, distanciaMercurioX * sin(anglePlanet))
                 * Matrix_Rotate_Z(0.6f)
                 * Matrix_Rotate_X(0.2f)
                 * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
@@ -467,9 +469,10 @@ int main(int argc, char* argv[])
         DrawVirtualObject("the_sphere");
 
         // Venus:
-        angularSpeed = 0.5f;
+        angularSpeed = 35.02f / distanciaVenusX;       // Velocidade angular
+        anglePlanet = angularSpeed * glfwGetTime();    // Ângulo da posição do planeta ao longo da órbita
         // Posiciona o objeto em uma órbita circular
-        model = Matrix_Translate(distanciaVenusX * cos(angularSpeed * glfwGetTime()), 0.0f, distanciaVenusX * sin(angularSpeed * glfwGetTime())) /
+        model = Matrix_Translate(distanciaVenusX * cos(anglePlanet), 0.0f, distanciaVenusX * sin(anglePlanet))
                 * Matrix_Rotate_Z(0.6f)
                 * Matrix_Rotate_X(0.2f)
                 * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
@@ -479,9 +482,10 @@ int main(int argc, char* argv[])
         DrawVirtualObject("the_sphere");
 
         // Terra:
-        angularSpeed = 0.8f;
+        angularSpeed = 29.78 / distanciaTerraX;       // Velocidade angular
+        anglePlanet = angularSpeed * glfwGetTime();   // Ângulo da posição do planeta ao longo da órbita
         // Posiciona o objeto em uma órbita circular
-        model = Matrix_Translate(distanciaTerraX * cos(angularSpeed * glfwGetTime()), 0.0f, distanciaTerraX * sin(angularSpeed * glfwGetTime()))
+        model = Matrix_Translate(distanciaTerraX * cos(anglePlanet), 0.0f, distanciaTerraX * sin(anglePlanet))
                 * Matrix_Rotate_X(0.2f)
                 * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
                 * Matrix_Scale(tamanhoTerra,tamanhoTerra,tamanhoTerra); // Aumenta o objeto

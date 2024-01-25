@@ -94,7 +94,7 @@ void main()
 
     if ( object_id == SOL )
     {
-        Kd0 = texture(TextureSun, vec2(U,V)).rgb;
+        Kd0 = texture(TextureSun, vec2(U,V)).rgb * 1.2;
 
         Kd = vec3(1.0,1.0,0.0);
         Ks = vec3(0.0,0.0,0.0);
@@ -109,7 +109,7 @@ void main()
         Ks = vec3(0.2,0.2,0.2);
         Ka = vec3(0.0,0.0,0.0);
         q = 32.0;
-        
+
         if (object_id == MERCURIO)
             {Kd0 = texture(TextureMercury, vec2(U,V)).rgb;}
         else if (object_id == VENUS)

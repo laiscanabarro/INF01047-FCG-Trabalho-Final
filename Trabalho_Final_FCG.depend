@@ -1899,7 +1899,7 @@
 	<inttypes.h>
 	<stdint.h>
 
-1706144439 source:c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\src\main.cpp
+1706180098 source:c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -1921,6 +1921,8 @@
 	<stb_image.h>
 	"utils.h"
 	"matrices.h"
+	<GL/gl.h>
+	<GL/glu.h>
 
 1706144438 c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\include\glfw\glfw3.h
 	<stddef.h>
