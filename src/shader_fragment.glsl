@@ -2,46 +2,50 @@
 
 // Atributos de fragmentos recebidos como entrada ("in") pelo Fragment Shader.
 // Neste exemplo, este atributo foi gerado pelo rasterizador como a
-// interpolação da posição global e a normal de cada vértice, definidas em
+// interpolaï¿½ï¿½o da posiï¿½ï¿½o global e a normal de cada vï¿½rtice, definidas em
 // "shader_vertex.glsl" e "main.cpp".
 in vec4 position_world;
 in vec4 normal;
 
-// Posição do vértice atual no sistema de coordenadas local do modelo.
+// Posiï¿½ï¿½o do vï¿½rtice atual no sistema de coordenadas local do modelo.
 in vec4 position_model;
 
 // Coordenadas de textura obtidas do arquivo OBJ (se existirem!)
 in vec2 texcoords;
 
-// Matrizes computadas no código C++ e enviadas para a GPU
+// Matrizes computadas no cï¿½digo C++ e enviadas para a GPU
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-// Identificador que define qual objeto está sendo desenhado no momento
+// Identificador que define qual objeto estï¿½ sendo desenhado no momento
 #define SOL         0
 #define MERCURIO    1
 #define VENUS       2
 #define TERRA       3
 #define MARTE       4
 #define JUPITER     5
-#define SKY         6
+#define SATURNO     6
+#define URANO       7
+#define NETUNO      8
 uniform int object_id;
 
-// Parâmetros da axis-aligned bounding box (AABB) do modelo
+// Parï¿½metros da axis-aligned bounding box (AABB) do modelo
 uniform vec4 bbox_min;
 uniform vec4 bbox_max;
 
-// Variáveis para acesso das imagens de textura
+// Variï¿½veis para acesso das imagens de textura
 uniform sampler2D TextureSun;
 uniform sampler2D TextureMercury;
 uniform sampler2D TextureVenus;
 uniform sampler2D TextureEarth;
 uniform sampler2D TextureMars;
 uniform sampler2D TextureJupiter;
-uniform sampler2D TextureSky;
+uniform sampler2D TextureSaturn;
+uniform sampler2D TextureUranus;
+uniform sampler2D TextureNeptune;
 
-// O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
+// O valor de saï¿½da ("out") de um Fragment Shader ï¿½ a cor final do fragmento.
 out vec4 color;
 
 // Constantes
@@ -50,32 +54,32 @@ out vec4 color;
 
 void main()
 {
-    // Obtemos a posição da câmera utilizando a inversa da matriz que define o
-    // sistema de coordenadas da câmera.
+    // Obtemos a posiï¿½ï¿½o da cï¿½mera utilizando a inversa da matriz que define o
+    // sistema de coordenadas da cï¿½mera.
     vec4 origin = vec4(0.0, 0.0, 0.0, 1.0);
     vec4 camera_position = inverse(view) * origin;
 
-    // O fragmento atual é coberto por um ponto que percente à superfície de um
-    // dos objetos virtuais da cena. Este ponto, p, possui uma posição no
-    // sistema de coordenadas global (World coordinates). Esta posição é obtida
-    // através da interpolação, feita pelo rasterizador, da posição de cada
-    // vértice.
+    // O fragmento atual ï¿½ coberto por um ponto que percente ï¿½ superfï¿½cie de um
+    // dos objetos virtuais da cena. Este ponto, p, possui uma posiï¿½ï¿½o no
+    // sistema de coordenadas global (World coordinates). Esta posiï¿½ï¿½o ï¿½ obtida
+    // atravï¿½s da interpolaï¿½ï¿½o, feita pelo rasterizador, da posiï¿½ï¿½o de cada
+    // vï¿½rtice.
     vec4 p = position_world;
 
     // habemus lux:
     vec4 lightDir = normalize(origin - position_world);
 
     // Normal do fragmento atual, interpolada pelo rasterizador a partir das
-    // normais de cada vértice.
+    // normais de cada vï¿½rtice.
     vec4 n = normalize(normal);
 
-    // Vetor que define o sentido da fonte de luz em relação ao ponto atual.
+    // Vetor que define o sentido da fonte de luz em relaï¿½ï¿½o ao ponto atual.
     vec4 l = lightDir;
 
-    // Vetor que define o sentido da câmera em relação ao ponto atual.
+    // Vetor que define o sentido da cï¿½mera em relaï¿½ï¿½o ao ponto atual.
     vec4 v = normalize(camera_position - p);
 
-    // Vetor que define o sentido da reflexão especular ideal.
+    // Vetor que define o sentido da reflexï¿½o especular ideal.
     vec4 r = -l + 2*n*dot(n,l);
 
     // Coordenadas de textura U e V
@@ -83,11 +87,11 @@ void main()
     float V = 0.0;
     vec3 Kd0 = vec3(0.2,0.2,0.2);
 
-    // Parâmetros que definem as propriedades espectrais da superfície
-    vec3 Kd; // Refletância difusa
-    vec3 Ks; // Refletância especular
-    vec3 Ka; // Refletância ambiente
-    float q; // Expoente especular para o modelo de iluminação de Phong
+    // Parï¿½metros que definem as propriedades espectrais da superfï¿½cie
+    vec3 Kd; // Refletï¿½ncia difusa
+    vec3 Ks; // Refletï¿½ncia especular
+    vec3 Ka; // Refletï¿½ncia ambiente
+    float q; // Expoente especular para o modelo de iluminaï¿½ï¿½o de Phong
 
     U = texcoords.x;
     V = texcoords.y;
@@ -96,7 +100,7 @@ void main()
 
     if ( object_id == SOL )
     {
-        Kd0 = texture(TextureSun, vec2(U,V)).rgb;
+        Kd0 = texture(TextureSun, vec2(U,V)).rgb * 1.2;
 
         Kd = vec3(1.0,1.0,0.0);
         Ks = vec3(0.0,0.0,0.0);
@@ -112,12 +116,24 @@ void main()
         Ka = vec3(0.0,0.0,0.0);
         q = 32.0;
 
+
         if (object_id == MERCURIO)
             {Kd0 = texture(TextureMercury, vec2(U,V)).rgb;}
         else if (object_id == VENUS)
             {Kd0 = texture(TextureVenus, vec2(U,V)).rgb;}
         else if (object_id == TERRA)
             {Kd0 = texture(TextureEarth, vec2(U,V)).rgb;}
+
+        else if (object_id == MARTE)
+            {Kd0 = texture(TextureMars, vec2(U,V)).rgb;}
+        else if (object_id == JUPITER)
+            {Kd0 = texture(TextureJupiter, vec2(U,V)).rgb;}
+        else if (object_id == SATURNO)
+            {Kd0 = texture(TextureSaturn, vec2(U,V)).rgb;}
+        else if (object_id == URANO)
+            {Kd0 = texture(TextureUranus, vec2(U,V)).rgb;}
+        else if (object_id == NETUNO)
+            {Kd0 = texture(TextureNeptune, vec2(U,V)).rgb;}
         else // Objeto desconhecido = preto
         {
             Kd = vec3(0.0,0.0,0.0);
@@ -127,7 +143,7 @@ void main()
         }
     }
 
-    // Espectro da fonte de iluminação
+    // Espectro da fonte de iluminaï¿½ï¿½o
     vec3 I = vec3(1.0,1.0,1.0); // PREENCH AQUI o espectro da fonte de luz
 
     // Espectro da luz ambiente
@@ -139,32 +155,32 @@ void main()
     // Termo ambiente
     vec3 ambient_term = vec3(0.1,0.1,0.1); // PREENCHA AQUI o termo ambiente
 
-    // Termo especular utilizando o modelo de iluminação de Phong
+    // Termo especular utilizando o modelo de iluminaï¿½ï¿½o de Phong
     float phong_specular_term  = pow(max(0,dot(r,v)),q); // PREENCH AQUI o termo especular de Phong
 
-    // NOTE: Se você quiser fazer o rendering de objetos transparentes, é
-    // necessário:
-    // 1) Habilitar a operação de "blending" de OpenGL logo antes de realizar o
-    //    desenho dos objetos transparentes, com os comandos abaixo no código C++:
+    // NOTE: Se vocï¿½ quiser fazer o rendering de objetos transparentes, ï¿½
+    // necessï¿½rio:
+    // 1) Habilitar a operaï¿½ï¿½o de "blending" de OpenGL logo antes de realizar o
+    //    desenho dos objetos transparentes, com os comandos abaixo no cï¿½digo C++:
     //      glEnable(GL_BLEND);
     //      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    // 2) Realizar o desenho de todos objetos transparentes *após* ter desenhado
+    // 2) Realizar o desenho de todos objetos transparentes *apï¿½s* ter desenhado
     //    todos os objetos opacos; e
     // 3) Realizar o desenho de objetos transparentes ordenados de acordo com
-    //    suas distâncias para a câmera (desenhando primeiro objetos
-    //    transparentes que estão mais longe da câmera).
+    //    suas distï¿½ncias para a cï¿½mera (desenhando primeiro objetos
+    //    transparentes que estï¿½o mais longe da cï¿½mera).
     // Alpha default = 1 = 100% opaco = 0% transparente
     color.a = 1;
 
-    // Cor final do fragmento calculada com uma combinação dos termos difuso,
+    // Cor final do fragmento calculada com uma combinaï¿½ï¿½o dos termos difuso,
     // especular, e ambiente. Veja slide 129 do documento Aula_17_e_18_Modelos_de_Iluminacao.pdf.
 
-    if ( object_id == SOL ) // Sol não possui iluminação externa por si proprio emitir luz, então precisamos compensar por isso
+    if ( object_id == SOL ) // Sol nï¿½o possui iluminaï¿½ï¿½o externa por si proprio emitir luz, entï¿½o precisamos compensar por isso
         color.rgb = Kd0 + (lambert_diffuse_term * I * Kd) + (ambient_term * Ia * Ka) + (phong_specular_term * I * Ks);
     else
         color.rgb = Kd0 * (lambert_diffuse_term * I * Kd) + (ambient_term * Ia * Ka) + (phong_specular_term * I * Ks);
 
-    // Cor final com correção gamma, considerando monitor sRGB.
+    // Cor final com correï¿½ï¿½o gamma, considerando monitor sRGB.
     // Veja https://en.wikipedia.org/w/index.php?title=Gamma_correction&oldid=751281772#Windows.2C_Mac.2C_sRGB_and_TV.2Fvideo_standard_gammas
     color.rgb = pow(color.rgb, vec3(1.0,1.0,1.0)/2.2);
 }
