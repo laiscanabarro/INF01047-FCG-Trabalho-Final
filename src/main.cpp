@@ -39,8 +39,8 @@
 #include "utils.h"
 #include "matrices.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
+//#include <GL/gl.h>
+//#include <GL/glu.h>
 
 
 // Estrutura que representa um modelo geométrico carregado a partir de um
@@ -146,7 +146,7 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
-void drawStar();
+//void drawStar();
 
 // Definimos uma estrutura que armazenará dados necessários para renderizar
 // cada objeto da cena virtual.
@@ -1739,7 +1739,7 @@ void PrintObjModelInfo(ObjModel* model)
   }
 }
 
-
+/*
 void drawStar() {
     //white color
     glColor3f(1.0f, 1.0f, 1.0f);
@@ -1782,7 +1782,7 @@ void drawStar() {
 
     glEnd();
     angle+=0.1f;
-}
+}*/
 
 // set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null
 // vim: set spell spelllang=pt_br :
