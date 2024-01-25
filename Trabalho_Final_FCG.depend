@@ -1923,8 +1923,6 @@
 	<stb_image.h>
 	"utils.h"
 	"matrices.h"
-	<GL/gl.h>
-	<GL/glu.h>
 
 1706144438 c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\include\glfw\glfw3.h
 1706144438 c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\include\glfw\glfw3.h
