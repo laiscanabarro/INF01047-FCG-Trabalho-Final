@@ -39,10 +39,6 @@
 #include "utils.h"
 #include "matrices.h"
 
-//#include <GL/gl.h>
-//#include <GL/glu.h>
-
-
 // Estrutura que representa um modelo geométrico carregado a partir de um
 // arquivo ".obj". Veja https://en.wikipedia.org/wiki/Wavefront_.obj_file .
 struct ObjModel
@@ -145,8 +141,6 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-
-//void drawStar();
 
 // Definimos uma estrutura que armazenará dados necessários para renderizar
 // cada objeto da cena virtual.
@@ -1739,50 +1733,6 @@ void PrintObjModelInfo(ObjModel* model)
   }
 }
 
-/*
-void drawStar() {
-    //white color
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glBegin(GL_POINTS);
-
-	glVertex3f(-10.0f, -3.0f, 0.0f);
-	glVertex3f(-12.0f, -3.0f, 0.0f);
-	glVertex3f(-14.0f, -3.0f, 0.0f);
-
-	glVertex3f(2.0f, 2.0f, 0.0f);
-	glVertex3f(3.0f, 3.0f, 0.0f);
-    glVertex3f(3.0f, 4.0f, 0.0f);
-    glVertex3f(2.0f, 4.0f, 0.0f);
-    glVertex3f(3.0f, 32.0f, 0.0f);
-    glVertex3f(3.0f, 5.0f, 0.0f);
-    glVertex3f(3.0f, 6.0f, 0.0f);
-    glVertex3f(2.0f, 5.0f, 0.0f);
-    glVertex3f(3.0f, 4.0f, 0.0f);
-    glVertex3f(2.0f, 4.0f, 0.0f);
-    glVertex3f(3.0f, 6.0f, 0.0f);
-    glVertex3f(4.0f, 1.0f, 0.0f);
-    glVertex3f(6.0f, 1.0f, 0.0f);
-    glVertex3f(8.0f, .0f, 0.0f);
-    glVertex3f(3.0f, 6.0f, 0.0f);
-    glVertex3f(4.0f, 1.0f, 0.0f);
-    glVertex3f(6.0f, 1.0f, 0.0f);
-    glVertex3f(8.0f, .0f, 0.0f);
-    glVertex3f(6.0f, -1.0f, 0.0f);
-    glVertex3f(8.0f, -1.0f, 0.0f);
-    glVertex3f(-10.0f, 3.0f, 0.0f);
-	glVertex3f(-12.0f, 3.0f, 0.0f);
-	glVertex3f(-14.0f, -3.0f, 0.0f);
-	glVertex3f(-10.0f, 4.0f, 0.0f);
-	glVertex3f(-12.0f, 5.0f, 0.0f);
-	glVertex3f(-14.0f, 6.0f, 0.0f);
-	glVertex3f(-15.0f, 4.0f, 0.0f);
-	glVertex3f(-13.0f, 5.0f, 0.0f);
-	glVertex3f(-11.0f, 6.0f, 0.0f);
-
-
-    glEnd();
-    angle+=0.1f;
-}*/
 
 // set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null
 // vim: set spell spelllang=pt_br :
