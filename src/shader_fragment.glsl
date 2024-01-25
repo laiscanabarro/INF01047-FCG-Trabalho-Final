@@ -25,6 +25,9 @@ uniform mat4 projection;
 #define TERRA       3
 #define MARTE       4
 #define JUPITER     5
+#define SATURNO     6
+#define URANO       7
+#define NETUNO      8
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -38,6 +41,9 @@ uniform sampler2D TextureVenus;
 uniform sampler2D TextureEarth;
 uniform sampler2D TextureMars;
 uniform sampler2D TextureJupiter;
+uniform sampler2D TextureSaturn;
+uniform sampler2D TextureUranus;
+uniform sampler2D TextureNeptune;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec4 color;
@@ -116,6 +122,17 @@ void main()
             {Kd0 = texture(TextureVenus, vec2(U,V)).rgb;}
         else if (object_id == TERRA)
             {Kd0 = texture(TextureEarth, vec2(U,V)).rgb;}
+
+        else if (object_id == MARTE)
+            {Kd0 = texture(TextureMars, vec2(U,V)).rgb;}
+        else if (object_id == JUPITER)
+            {Kd0 = texture(TextureJupiter, vec2(U,V)).rgb;}
+        else if (object_id == SATURNO)
+            {Kd0 = texture(TextureSaturn, vec2(U,V)).rgb;}
+        else if (object_id == URANO)
+            {Kd0 = texture(TextureUranus, vec2(U,V)).rgb;}
+        else if (object_id == NETUNO)
+            {Kd0 = texture(TextureNeptune, vec2(U,V)).rgb;}
         else // Objeto desconhecido = preto
         {
             Kd = vec3(0.0,0.0,0.0);

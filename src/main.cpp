@@ -308,9 +308,15 @@ int main(int argc, char* argv[])
 
     // Texturas:
     LoadTextureImage("../../data/textures/sun.jpg");      // TextureSun
-    LoadTextureImage("../../data/textures/mercury.jpg"); // TextureMercury
-    LoadTextureImage("../../data/textures/venus.jpg"); // TextureVenus
-    LoadTextureImage("../../data/textures/earth.jpg"); // TextureEarth
+    LoadTextureImage("../../data/textures/mercury.jpg");  // TextureMercury
+    LoadTextureImage("../../data/textures/venus.jpg");    // TextureVenus
+    LoadTextureImage("../../data/textures/earth.jpg");    // TextureEarth
+    LoadTextureImage("../../data/textures/mars.jpg");     // TextureMars
+    LoadTextureImage("../../data/textures/jupiter.jpg");  // TextureJupiter
+    LoadTextureImage("../../data/textures/saturn.jpg");   // TextureSaturn
+    LoadTextureImage("../../data/textures/uranus.jpg");   // TextureUranus
+    LoadTextureImage("../../data/textures/neptune.jpg");  // TextureNeptune
+
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
@@ -426,17 +432,30 @@ int main(int argc, char* argv[])
         #define TERRA       3
         #define MARTE       4
         #define JUPITER     5
+        #define SATURNO     6
+        #define URANO       7
+        #define NETUNO      8
 
         // Conversão de tamanhos: 1.0f = 1.000 KM
-        float tamanhoSol = 28.0f; // Diâmetro: 1.400.000 KM (O sol terá que ser diminuido 98% de tamanho para caber na projeção)
+        float tamanhoSol = 140.0f; // Diâmetro: 1.400.000 KM (O sol terá que ser diminuido 90% de tamanho para caber na projeção)
         float tamanhoMercurio = 4.8f; // Diâmetro: 4.879 KM
         float tamanhoVenus = 12.104f; // Diâmetro: 12.104 KM
         float tamanhoTerra = 12.742f; // Diâmetro: 12.742 KM
+        float tamanhoMarte = 6.779f; // Diâmetro: 6.779 KM
+        float tamanhoJupiter = 139.820f; // Diâmetro: 139.820 KM
+        float tamanhoSaturno = 116.460f; // Diâmetro: 116.460 KM
+        float tamanhoUrano = 50.724f;   // Diâmetro: 50.724 KM
+        float tamanhoNetuno = 49.244f;  // Diâmtro: 49.244 KM
 
         // Conversão de distancias: 1.0f = 1.000.000 KM
-        float distanciaMercurioX = 58.0f + tamanhoSol/2 + tamanhoMercurio/2; // Distancia do Sol: 58.000.000 + 1/2 diametro do Sol + 1/2 diametro de Mercurio
+        float distanciaMercurioX = 58.0f + tamanhoSol + tamanhoMercurio/2; // Distancia do Sol: 58.000.000 + 1/2 diametro do Sol + 1/2 diametro de Mercurio
         float distanciaVenusX = distanciaMercurioX + 50.0f + tamanhoMercurio/2 + tamanhoVenus/2; // Distancia de Mercurio: 50.000.000 + 1/2 diametro de Mercurio + 1/2 diametro de Venus
-        float distanciaTerraX = distanciaVenusX + 61.0f + tamanhoVenus/2 + tamanhoTerra/2; // Distancia da terra
+        float distanciaTerraX = distanciaVenusX + 41.0f + tamanhoVenus/2 + tamanhoTerra/2; // Distancia da terra
+        float distanciaMarteX = distanciaTerraX + 78.0f + tamanhoTerra/2 + tamanhoMarte/2; // Distancia de Marte
+        float distanciaJupiterX = distanciaMarteX + 550.0f + tamanhoMarte/2 + tamanhoJupiter/2; // Distancia de Jupiter
+        float distanciaSaturnoX = distanciaJupiterX + 646.0f + tamanhoJupiter/2 + tamanhoSaturno/2; // Distancia de Saturno
+        float distanciaUranoX = distanciaSaturnoX + 1448.0f + tamanhoSaturno/2 + tamanhoUrano/2; // Distancia de Urano
+        float distanciaNetunoX = distanciaUranoX + 1627.0f +  tamanhoUrano/2 + tamanhoNetuno/2; // Distancia de Netuno
 
         float angularSpeed; // Velocidade angular para translação dos planetas
         float anglePlanet;  // Ângulo da posição dos planetas ao longo da suas órbitas
@@ -486,6 +505,67 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, TERRA);
         DrawVirtualObject("the_sphere");
+
+        // Marte:
+        angularSpeed = 24.07 / distanciaMarteX;       // Velocidade angular
+        anglePlanet = angularSpeed * glfwGetTime();   // Ângulo da posição do planeta ao longo da órbita
+        // Posiciona o objeto em uma órbita circular
+        model = Matrix_Translate(distanciaMarteX * cos(anglePlanet), 0.0f, distanciaMarteX * sin(anglePlanet))
+                * Matrix_Rotate_X(0.2f)
+                * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
+                * Matrix_Scale(tamanhoMarte,tamanhoMarte,tamanhoMarte); // Aumenta o objeto
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform, MARTE);
+        DrawVirtualObject("the_sphere");
+
+        // Jupiter:
+        angularSpeed = 13.07 / distanciaJupiterX;       // Velocidade angular
+        anglePlanet = angularSpeed * glfwGetTime();   // Ângulo da posição do planeta ao longo da órbita
+        // Posiciona o objeto em uma órbita circular
+        model = Matrix_Translate(distanciaJupiterX * cos(anglePlanet), 0.0f, distanciaJupiterX * sin(anglePlanet))
+                * Matrix_Rotate_X(0.2f)
+                * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
+                * Matrix_Scale(tamanhoJupiter,tamanhoJupiter,tamanhoJupiter); // Aumenta o objeto
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform,JUPITER);
+        DrawVirtualObject("the_sphere");
+
+        // Saturn:
+        angularSpeed = 9.69 / distanciaSaturnoX;       // Velocidade angular
+        anglePlanet = angularSpeed * glfwGetTime();   // Ângulo da posição do planeta ao longo da órbita
+        // Posiciona o objeto em uma órbita circular
+        model = Matrix_Translate(distanciaSaturnoX * cos(anglePlanet), 0.0f, distanciaSaturnoX * sin(anglePlanet))
+                * Matrix_Rotate_X(0.2f)
+                * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
+                * Matrix_Scale(tamanhoSaturno,tamanhoSaturno,tamanhoSaturno); // Aumenta o objeto
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform,SATURNO);
+        DrawVirtualObject("the_sphere");
+
+        // Urano:
+        angularSpeed = 6.81 / distanciaUranoX;       // Velocidade angular
+        anglePlanet = angularSpeed * glfwGetTime();   // Ângulo da posição do planeta ao longo da órbita
+        // Posiciona o objeto em uma órbita circular
+        model = Matrix_Translate(distanciaUranoX * cos(anglePlanet), 0.0f, distanciaUranoX * sin(anglePlanet))
+                * Matrix_Rotate_X(0.2f)
+                * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
+                * Matrix_Scale(tamanhoUrano,tamanhoUrano,tamanhoUrano); // Aumenta o objeto
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform,URANO);
+        DrawVirtualObject("the_sphere");
+
+        // Netuno:
+        angularSpeed = 5.43 / distanciaNetunoX;       // Velocidade angular
+        anglePlanet = angularSpeed * glfwGetTime();   // Ângulo da posição do planeta ao longo da órbita
+        // Posiciona o objeto em uma órbita circular
+        model = Matrix_Translate(distanciaNetunoX * cos(anglePlanet), 0.0f, distanciaNetunoX * sin(anglePlanet))
+                * Matrix_Rotate_X(0.2f)
+                * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
+                * Matrix_Scale(tamanhoNetuno,tamanhoNetuno,tamanhoNetuno); // Aumenta o objeto
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform,NETUNO);
+        DrawVirtualObject("the_sphere");
+
 
 
         // Imprimimos na tela os ângulos de Euler que controlam a rotação do
@@ -693,6 +773,9 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureEarth"), 3);
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureMars"), 4);
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureJupiter"), 5);
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureSaturn"), 6);
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureUranus"), 7);
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureNeptune"), 8);
     glUseProgram(0);
 }
 

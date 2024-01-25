@@ -1875,7 +1875,6 @@
 	<arm_neon.h>
 
 1706144439 source:c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\src\glad.c
-1706144439 source:c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\src\glad.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -1895,13 +1894,12 @@
 	<inttypes.h>
 
 1706144438 c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\include\khr\khrplatform.h
-1706144438 c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\include\khr\khrplatform.h
 	<sys/cdefs.h>
 	<stdint.h>
 	<inttypes.h>
 	<stdint.h>
 
-1706180233 source:c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\src\main.cpp
+1706204236 source:c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -1924,7 +1922,6 @@
 	"utils.h"
 	"matrices.h"
 
-1706144438 c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\include\glfw\glfw3.h
 1706144438 c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\include\glfw\glfw3.h
 	<stddef.h>
 	<stdint.h>
