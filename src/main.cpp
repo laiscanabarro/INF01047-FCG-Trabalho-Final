@@ -460,6 +460,17 @@ int main(int argc, char* argv[])
         float angularSpeed; // Velocidade angular para translação dos planetas
         float anglePlanet;  // Ângulo da posição dos planetas ao longo da suas órbitas
 
+        glDepthFunc(GL_ALWAYS);
+
+        // Skybox:
+        model = Matrix_Translate(0.0f,0.0f,0.0f) // Posiciona o objeto
+                * Matrix_Scale(farplane,farplane,farplane); // Aumenta o objeto
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform, SOL);
+        DrawVirtualObject("the_sphere");
+
+        glDepthFunc(GL_LESS);
+
         // Sol:
         // Centro da projeção
         model = Matrix_Translate(-5.0f,0.0f,0.0f) // Posiciona o objeto
@@ -565,8 +576,6 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform,NETUNO);
         DrawVirtualObject("the_sphere");
-
-
 
         // Imprimimos na tela os ângulos de Euler que controlam a rotação do
         // terceiro cubo.
