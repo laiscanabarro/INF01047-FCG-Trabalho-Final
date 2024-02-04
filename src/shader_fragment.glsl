@@ -28,6 +28,7 @@ uniform mat4 projection;
 #define SATURNO     6
 #define URANO       7
 #define NETUNO      8
+#define SKYBOX      9
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -44,6 +45,7 @@ uniform sampler2D TextureJupiter;
 uniform sampler2D TextureSaturn;
 uniform sampler2D TextureUranus;
 uniform sampler2D TextureNeptune;
+uniform sampler2D TextureSkybox;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec4 color;
@@ -98,14 +100,18 @@ void main()
 
     vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
 
-    if ( object_id == SOL )
+    if ( object_id == SOL || object_id == SKYBOX )
     {
-        Kd0 = texture(TextureSun, vec2(U,V)).rgb * 1.2;
-
         Kd = vec3(1.0,1.0,0.0);
         Ks = vec3(0.0,0.0,0.0);
         Ka = vec3(1.0,1.0,0.0);
         q = 1.0;
+
+        if (object_id == SOL)
+        {Kd0 = texture(TextureSun, vec2(U,V)).rgb * 1.2;}
+        else if (object_id == SKYBOX)
+        {Kd0 = texture(TextureSkybox, vec2(U,V)).rgb * 1.2;}
+
     }
     else {
 
@@ -122,7 +128,6 @@ void main()
             {Kd0 = texture(TextureVenus, vec2(U,V)).rgb;}
         else if (object_id == TERRA)
             {Kd0 = texture(TextureEarth, vec2(U,V)).rgb;}
-
         else if (object_id == MARTE)
             {Kd0 = texture(TextureMars, vec2(U,V)).rgb;}
         else if (object_id == JUPITER)
@@ -174,8 +179,8 @@ void main()
     // Cor final do fragmento calculada com uma combinação dos termos difuso,
     // especular, e ambiente. Veja slide 129 do documento Aula_17_e_18_Modelos_de_Iluminacao.pdf.
 
-    if ( object_id == SOL ) // Sol não possui iluminação externa por si proprio emitir luz, então precisamos compensar por isso
-        color.rgb = Kd0 + (lambert_diffuse_term * I * Kd) + (ambient_term * Ia * Ka) + (phong_specular_term * I * Ks);
+    if ( object_id == SOL || object_id == SKYBOX ) // Sol e skybox não possuem iluminação externa por si proprio emitir luz, então precisamos compensar por isso
+        color.rgb = Kd0;
     else
         color.rgb = Kd0 * (lambert_diffuse_term * I * Kd) + (ambient_term * Ia * Ka) + (phong_specular_term * I * Ks);
 

@@ -316,6 +316,7 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/textures/saturn.jpg");   // TextureSaturn
     LoadTextureImage("../../data/textures/uranus.jpg");   // TextureUranus
     LoadTextureImage("../../data/textures/neptune.jpg");  // TextureNeptune
+    LoadTextureImage("../../data/textures/skybox.png");   // TextureSkybox
 
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
@@ -341,7 +342,7 @@ int main(int argc, char* argv[])
     glFrontFace(GL_CCW);
 
     // Propriedades da camera
-    float speed = 100.0f; // Velocidade da câmera
+    float speed = 750.0f; // Velocidade da câmera
     float prev_time = (float)glfwGetTime();
 
     // Ficamos em um loop infinito, renderizando, até que o usuário feche a janela
@@ -395,7 +396,7 @@ int main(int argc, char* argv[])
         // Note que, no sistema de coordenadas da câmera, os planos near e far
         // estão no sentido negativo! Veja slides 176-204 do documento Aula_09_Projecoes.pdf.
         float nearplane = -0.1f;  // Posição do "near plane"
-        float farplane  = -10000.0f; // Posição do "far plane"
+        float farplane  = -100000.0f; // Posição do "far plane"
 
         if (g_UsePerspectiveProjection)
         {
@@ -435,6 +436,7 @@ int main(int argc, char* argv[])
         #define SATURNO     6
         #define URANO       7
         #define NETUNO      8
+        #define SKYBOX      9
 
         // Conversão de tamanhos: 1.0f = 1.000 KM
         float tamanhoSol = 140.0f; // Diâmetro: 1.400.000 KM (O sol terá que ser diminuido 90% de tamanho para caber na projeção)
@@ -460,16 +462,16 @@ int main(int argc, char* argv[])
         float angularSpeed; // Velocidade angular para translação dos planetas
         float anglePlanet;  // Ângulo da posição dos planetas ao longo da suas órbitas
 
-        glDepthFunc(GL_ALWAYS);
+        glDepthFunc(GL_ALWAYS); // Desativa Z-buffer para renderizar a skybox
 
         // Skybox:
-        model = Matrix_Translate(0.0f,0.0f,0.0f) // Posiciona o objeto
-                * Matrix_Scale(farplane,farplane,farplane); // Aumenta o objeto
+        model = Matrix_Translate(1.0f,1.0f,1.0f) // Posiciona o objeto
+                * Matrix_Scale(farplane/2,farplane/2,farplane/2); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(g_object_id_uniform, SOL);
+        glUniform1i(g_object_id_uniform, SKYBOX);
         DrawVirtualObject("the_sphere");
 
-        glDepthFunc(GL_LESS);
+        glDepthFunc(GL_LESS); // Ativa de novo o Z-buffer
 
         // Sol:
         // Centro da projeção
@@ -785,6 +787,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureSaturn"), 6);
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureUranus"), 7);
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureNeptune"), 8);
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureSkybox"), 9);
     glUseProgram(0);
 }
 
@@ -1322,7 +1325,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
     // Atualizamos a distância da câmera para a origem utilizando a
     // movimentação da "rodinha", simulando um ZOOM.
-    g_CameraDistance -= 8.0f*yoffset;
+ //   g_CameraDistance -= 8.0f*yoffset;
 
     // Uma câmera look-at nunca pode estar exatamente "em cima" do ponto para
     // onde ela está olhando, pois isto gera problemas de divisão por zero na
