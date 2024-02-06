@@ -317,12 +317,17 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/textures/uranus.jpg");   // TextureUranus
     LoadTextureImage("../../data/textures/neptune.jpg");  // TextureNeptune
     LoadTextureImage("../../data/textures/skybox.png");   // TextureSkybox
+    LoadTextureImage("../../data/textures/silver_metal.jpg");      // TextureSpaceship
 
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
     ComputeNormals(&spheremodel);
     BuildTrianglesAndAddToVirtualScene(&spheremodel);
+
+    ObjModel spaceshipmodel("../../data/spaceship.obj");
+    ComputeNormals(&spaceshipmodel);
+    BuildTrianglesAndAddToVirtualScene(&spaceshipmodel);
 
     if ( argc > 1 )
     {
@@ -437,6 +442,7 @@ int main(int argc, char* argv[])
         #define URANO       7
         #define NETUNO      8
         #define SKYBOX      9
+        #define SPACESHIP   10
 
         // Conversão de tamanhos: 1.0f = 1.000 KM
         float tamanhoSol = 140.0f; // Diâmetro: 1.400.000 KM (O sol terá que ser diminuido 90% de tamanho para caber na projeção)
@@ -480,6 +486,23 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, SOL);
         DrawVirtualObject("the_sphere");
+
+        // Nave:
+        //glm::vec4 spaceship_position_relative = glm::vec4(0.0f, 0.0f, -10.0f, 1.0f); // 10 unidades à frente da câmera
+
+        // Posição absoluta da nave utilizando a posição da câmera.
+        //glm::vec4 spaceship_position = camera_position_c + camera_view_vector + camera_up_vector + spaceship_position_relative;
+
+        float angleSpaceship = 0.5 * glfwGetTime();
+        model = Matrix_Translate(300.0f * cos(angleSpaceship), angleSpaceship, 300.0f * sin(angleSpaceship)) // Posiciona o objeto
+                * Matrix_Rotate_Z(0.0f)
+                * Matrix_Rotate_X(0.0f)
+                * Matrix_Rotate_Y(-0.5f)
+                * Matrix_Scale(1,1,1); // Aumenta o objeto
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform, SPACESHIP);
+        DrawVirtualObject("Cube");
+
 
         // Mercurio:
         angularSpeed = 47.87f / distanciaMercurioX;    // Velocidade angular
@@ -788,6 +811,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureUranus"), 7);
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureNeptune"), 8);
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureSkybox"), 9);
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureSpaceship"), 10);
     glUseProgram(0);
 }
 
