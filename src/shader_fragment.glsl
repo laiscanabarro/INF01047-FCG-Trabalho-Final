@@ -30,6 +30,7 @@ uniform mat4 projection;
 #define NETUNO      8
 #define SKYBOX      9
 #define SPACESHIP   10
+#define ROCK        11
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -48,6 +49,7 @@ uniform sampler2D TextureUranus;
 uniform sampler2D TextureNeptune;
 uniform sampler2D TextureSkybox;
 uniform sampler2D TextureSpaceship;
+uniform sampler2D TextureRock;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec4 color;
@@ -142,6 +144,8 @@ void main()
             {Kd0 = texture(TextureNeptune, vec2(U,V)).rgb;}
         else if (object_id == SPACESHIP)
             {Kd0 = texture(TextureSpaceship, vec2(U,V)).rgb;}
+        else if (object_id == ROCK)
+            {Kd0 = texture(TextureRock, vec2(U,V)).rgb;}
         else // Objeto desconhecido = preto
         {
             Kd = vec3(0.0,0.0,0.0);

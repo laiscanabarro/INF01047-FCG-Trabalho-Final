@@ -196,7 +196,7 @@ bool g_ShiftPressed = false;
 // renderização.
 float g_CameraTheta = 0.0f; // Ângulo no plano ZX em relação ao eixo Z
 float g_CameraPhi = 0.0f;   // Ângulo em relação ao eixo Y
-float g_CameraDistance = 240.0f; // Distância da câmera para a origem
+float g_CameraDistance = 1000.0f; // Distância da câmera para a origem
 
 // Variáveis que controlam rotação do antebraço
 float g_ForearmAngleZ = 0.0f;
@@ -318,6 +318,7 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/textures/neptune.jpg");  // TextureNeptune
     LoadTextureImage("../../data/textures/skybox.png");   // TextureSkybox
     LoadTextureImage("../../data/textures/silver_metal.jpg");      // TextureSpaceship
+    LoadTextureImage("../../data/textures/rock.jpg");      // TextureSpaceship
 
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
@@ -328,6 +329,15 @@ int main(int argc, char* argv[])
     ObjModel spaceshipmodel("../../data/spaceship.obj");
     ComputeNormals(&spaceshipmodel);
     BuildTrianglesAndAddToVirtualScene(&spaceshipmodel);
+
+    ObjModel rockmodel("../../data/rock.obj");
+    ComputeNormals(&rockmodel);
+    BuildTrianglesAndAddToVirtualScene(&rockmodel);
+
+    ObjModel asteroidmodel("../../data/asteroid.obj");
+    ComputeNormals(&asteroidmodel);
+    BuildTrianglesAndAddToVirtualScene(&asteroidmodel);
+
 
     if ( argc > 1 )
     {
@@ -443,6 +453,7 @@ int main(int argc, char* argv[])
         #define NETUNO      8
         #define SKYBOX      9
         #define SPACESHIP   10
+        #define ROCK        11
 
         // Conversão de tamanhos: 1.0f = 1.000 KM
         float tamanhoSol = 140.0f; // Diâmetro: 1.400.000 KM (O sol terá que ser diminuido 90% de tamanho para caber na projeção)
@@ -454,11 +465,13 @@ int main(int argc, char* argv[])
         float tamanhoSaturno = 116.460f; // Diâmetro: 116.460 KM
         float tamanhoUrano = 50.724f;   // Diâmetro: 50.724 KM
         float tamanhoNetuno = 49.244f;  // Diâmtro: 49.244 KM
+        float tamanhoLua = 3.474f; // Diâmetro: 3.474 km
 
         // Conversão de distancias: 1.0f = 1.000.000 KM
         float distanciaMercurioX = 58.0f + tamanhoSol + tamanhoMercurio/2; // Distancia do Sol: 58.000.000 + 1/2 diametro do Sol + 1/2 diametro de Mercurio
         float distanciaVenusX = distanciaMercurioX + 50.0f + tamanhoMercurio/2 + tamanhoVenus/2; // Distancia de Mercurio: 50.000.000 + 1/2 diametro de Mercurio + 1/2 diametro de Venus
         float distanciaTerraX = distanciaVenusX + 41.0f + tamanhoVenus/2 + tamanhoTerra/2; // Distancia da terra
+        float distanciaLuaX = distanciaTerraX + 0.384f + tamanhoTerra/2 + tamanhoLua/2; // Distancia de Lua
         float distanciaMarteX = distanciaTerraX + 78.0f + tamanhoTerra/2 + tamanhoMarte/2; // Distancia de Marte
         float distanciaJupiterX = distanciaMarteX + 550.0f + tamanhoMarte/2 + tamanhoJupiter/2; // Distancia de Jupiter
         float distanciaSaturnoX = distanciaJupiterX + 646.0f + tamanhoJupiter/2 + tamanhoSaturno/2; // Distancia de Saturno
@@ -493,7 +506,7 @@ int main(int argc, char* argv[])
         // Posição absoluta da nave utilizando a posição da câmera.
         //glm::vec4 spaceship_position = camera_position_c + camera_view_vector + camera_up_vector + spaceship_position_relative;
 
-        float angleSpaceship = 0.5 * glfwGetTime();
+        float angleSpaceship = 0.3 * glfwGetTime();
         model = Matrix_Translate(300.0f * cos(angleSpaceship), angleSpaceship, 300.0f * sin(angleSpaceship)) // Posiciona o objeto
                 * Matrix_Rotate_Z(0.0f)
                 * Matrix_Rotate_X(0.0f)
@@ -502,6 +515,14 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, SPACESHIP);
         DrawVirtualObject("Cube");
+
+        // Rochas:
+
+        model = Matrix_Translate(300.0f, 0.0f, 0.0f) // Posiciona o objeto
+                * Matrix_Scale(25,25,25); // Aumenta o objeto
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform, ROCK);
+        DrawVirtualObject("Rock");
 
 
         // Mercurio:
@@ -541,6 +562,19 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, TERRA);
         DrawVirtualObject("the_sphere");
+
+        /*
+        // Lua:
+        angularSpeed = 1.022 / distanciaLuaX;       // Velocidade angular
+        float angleMoon = angularSpeed * glfwGetTime();   // Ângulo da posição do planeta ao longo da órbita
+        // Posiciona o objeto em uma órbita circular
+        model = Matrix_Translate(distanciaTerraX * cos(anglePlanet), 0.0f, distanciaTerraX * sin(anglePlanet)) // Começa com a transformação da Terra
+                * Matrix_Translate(distanciaLuaX * cos(angleMoon), 0.0f, distanciaLuaX * sin(angleMoon)) // Desloca a Lua em relação à Terra
+                * Matrix_Rotate_Y((float)glfwGetTime() * 0.1f)
+                * Matrix_Scale(tamanhoLua,tamanhoLua,tamanhoLua); // Escala da Lua
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform, TERRA);
+        DrawVirtualObject("the_sphere");*/
 
         // Marte:
         angularSpeed = 24.07 / distanciaMarteX;       // Velocidade angular
@@ -812,6 +846,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureNeptune"), 8);
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureSkybox"), 9);
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureSpaceship"), 10);
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureRock"), 11);
     glUseProgram(0);
 }
 
