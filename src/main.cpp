@@ -317,8 +317,8 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/textures/uranus.jpg");   // TextureUranus
     LoadTextureImage("../../data/textures/neptune.jpg");  // TextureNeptune
     LoadTextureImage("../../data/textures/skybox.png");   // TextureSkybox
-    LoadTextureImage("../../data/textures/silver_metal.jpg");      // TextureSpaceship
-    LoadTextureImage("../../data/textures/rock.jpg");      // TextureSpaceship
+    LoadTextureImage("../../data/textures/silver_metal.jpg");  // TextureSpaceship
+    LoadTextureImage("../../data/textures/rock.jpg");      // TextureRock
 
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
