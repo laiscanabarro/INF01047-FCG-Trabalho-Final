@@ -307,18 +307,20 @@ int main(int argc, char* argv[])
     LoadShadersFromFiles();
 
     // Texturas:
-    LoadTextureImage("../../data/textures/sun.jpg");      // TextureSun
-    LoadTextureImage("../../data/textures/mercury.jpg");  // TextureMercury
-    LoadTextureImage("../../data/textures/venus.jpg");    // TextureVenus
-    LoadTextureImage("../../data/textures/earth.jpg");    // TextureEarth
-    LoadTextureImage("../../data/textures/mars.jpg");     // TextureMars
-    LoadTextureImage("../../data/textures/jupiter.jpg");  // TextureJupiter
-    LoadTextureImage("../../data/textures/saturn.jpg");   // TextureSaturn
-    LoadTextureImage("../../data/textures/uranus.jpg");   // TextureUranus
-    LoadTextureImage("../../data/textures/neptune.jpg");  // TextureNeptune
-    LoadTextureImage("../../data/textures/skybox.png");   // TextureSkybox
+    LoadTextureImage("../../data/textures/sun.jpg");               // TextureSun
+    LoadTextureImage("../../data/textures/mercury.jpg");           // TextureMercury
+    LoadTextureImage("../../data/textures/venus.jpg");             // TextureVenus
+    LoadTextureImage("../../data/textures/earth.jpg");             // TextureEarth
+    LoadTextureImage("../../data/textures/mars.jpg");              // TextureMars
+    LoadTextureImage("../../data/textures/jupiter.jpg");           // TextureJupiter
+    LoadTextureImage("../../data/textures/saturn.jpg");            // TextureSaturn
+    LoadTextureImage("../../data/textures/uranus.jpg");            // TextureUranus
+    LoadTextureImage("../../data/textures/neptune.jpg");           // TextureNeptune
+    LoadTextureImage("../../data/textures/skybox.png");            // TextureSkybox
     LoadTextureImage("../../data/textures/silver_metal.jpg");      // TextureSpaceship
-    LoadTextureImage("../../data/textures/rock.jpg");      // TextureSpaceship
+    LoadTextureImage("../../data/textures/rock.jpg");              // TextureRock
+    LoadTextureImage("../../data/textures/asteroid.jpg");          // TextureAsteroid
+
 
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
@@ -357,7 +359,7 @@ int main(int argc, char* argv[])
     glFrontFace(GL_CCW);
 
     // Propriedades da camera
-    float speed = 750.0f; // Velocidade da câmera
+    float speed = 200.0f; // Velocidade da câmera
     float prev_time = (float)glfwGetTime();
 
     // Ficamos em um loop infinito, renderizando, até que o usuário feche a janela
@@ -454,6 +456,7 @@ int main(int argc, char* argv[])
         #define SKYBOX      9
         #define SPACESHIP   10
         #define ROCK        11
+        #define ASTEROID    12
 
         // Conversão de tamanhos: 1.0f = 1.000 KM
         float tamanhoSol = 140.0f; // Diâmetro: 1.400.000 KM (O sol terá que ser diminuido 90% de tamanho para caber na projeção)
@@ -501,17 +504,21 @@ int main(int argc, char* argv[])
         DrawVirtualObject("the_sphere");
 
         // Nave:
-        //glm::vec4 spaceship_position_relative = glm::vec4(0.0f, 0.0f, -10.0f, 1.0f); // 10 unidades à frente da câmera
+        r = 20.0f;
+        y = r*sin(g_CameraPhi);
+        z = r*cos(g_CameraPhi)*cos(g_CameraTheta);
+        x = r*cos(g_CameraPhi)*sin(g_CameraTheta);
+        camera_view_vector = glm::vec4(-x,-y,-z,0.0f);
+        glm::vec4 spaceship_position_relative = glm::vec4(0.0f, -5.0f, 0.0f, 1.0f); // 10 unidades à frente da câmera
 
         // Posição absoluta da nave utilizando a posição da câmera.
-        //glm::vec4 spaceship_position = camera_position_c + camera_view_vector + camera_up_vector + spaceship_position_relative;
+        glm::vec4 spaceship_position = camera_position_c + camera_view_vector + spaceship_position_relative;
 
-        float angleSpaceship = 0.3 * glfwGetTime();
-        model = Matrix_Translate(300.0f * cos(angleSpaceship), angleSpaceship, 300.0f * sin(angleSpaceship)) // Posiciona o objeto
-                * Matrix_Rotate_Z(0.0f)
-                * Matrix_Rotate_X(0.0f)
-                * Matrix_Rotate_Y(-0.5f)
-                * Matrix_Scale(1,1,1); // Aumenta o objeto
+        model = Matrix_Translate(spaceship_position.x, spaceship_position.y, spaceship_position.z) // Posiciona o objeto
+                * Matrix_Rotate_Z(g_CameraPhi)
+                * Matrix_Rotate_X(-g_CameraPhi)
+                * Matrix_Rotate_Y(g_CameraTheta)
+                * Matrix_Scale(0.5f,0.5f,0.5f); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, SPACESHIP);
         DrawVirtualObject("Cube");
@@ -519,10 +526,18 @@ int main(int argc, char* argv[])
         // Rochas:
 
         model = Matrix_Translate(300.0f, 0.0f, 0.0f) // Posiciona o objeto
-                * Matrix_Scale(25,25,25); // Aumenta o objeto
+                * Matrix_Scale(5,5,5); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, ROCK);
-        DrawVirtualObject("Rock");
+        DrawVirtualObject("rock");
+
+        // Asteroide:
+
+        model = Matrix_Translate(300.0f, 0.0f, 0.0f) // Posiciona o objeto
+                * Matrix_Scale(5,5,5); // Aumenta o objeto
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform, ASTEROID);
+        DrawVirtualObject("rock");
 
 
         // Mercurio:

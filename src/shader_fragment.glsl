@@ -31,6 +31,7 @@ uniform mat4 projection;
 #define SKYBOX      9
 #define SPACESHIP   10
 #define ROCK        11
+#define ASTEROID    12
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -50,6 +51,7 @@ uniform sampler2D TextureNeptune;
 uniform sampler2D TextureSkybox;
 uniform sampler2D TextureSpaceship;
 uniform sampler2D TextureRock;
+uniform sampler2D TextureAsteroid;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec4 color;
