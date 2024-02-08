@@ -143,6 +143,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+void Collided();
 
 glm::vec3 Bezier(float t, glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3);
 
@@ -193,6 +194,9 @@ bool g_DPressed = false;
 // Variaveis de UP or DOWN da camera
 bool g_SpacePressed = false;
 bool g_ShiftPressed = false;
+
+// Variavel de colisão
+bool g_Collision = false;
 
 // Variï¿½veis que definem a cï¿½mera em coordenadas esfï¿½ricas, controladas pelo
 // usuï¿½rio atravï¿½s do mouse (veja funï¿½ï¿½o CursorPosCallback()). A posiï¿½ï¿½o
@@ -740,6 +744,14 @@ int main(int argc, char* argv[])
         if (g_ShiftPressed)
         {
             camera_movement += -camera_up_vector * speed * delta_t;
+        }
+
+        if (g_Collision)
+        {
+            camera_movement = glm::vec4(0.0f,0.0f,0.0f,0.0f);
+        //    spaceship_position = glm::vec4(0.0f, -5.0f, 0.25f, 1.0f);
+
+            g_Collision = false;
         }
 
         // O framebuffer onde OpenGL executa as operaï¿½ï¿½es de renderizaï¿½ï¿½o nï¿½o
@@ -1529,9 +1541,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
     // Se o usuï¿½rio apertar a tecla R, recarregamos os shaders dos arquivos "shader_fragment.glsl" e "shader_vertex.glsl".
     if (key == GLFW_KEY_R && action == GLFW_PRESS)
     {
-        LoadShadersFromFiles();
-        fprintf(stdout,"Shaders recarregados!\n");
-        fflush(stdout);
+        g_Collision = true;
     }
 
     if (key == GLFW_KEY_W)
@@ -1962,9 +1972,3 @@ glm::vec3 Bezier(float t, glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3
 
     return p;
 }
-
-
-
-// set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null
-// vim: set spell spelllang=pt_br :
-
