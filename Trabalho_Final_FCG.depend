@@ -1900,9 +1900,13 @@
 	<stdint.h>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 1707220572 source:c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\src\main.cpp
 =======
 1707360951 source:c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\src\main.cpp
+>>>>>>> new-object
+=======
+1707365539 source:c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\src\main.cpp
 >>>>>>> new-object
 	<cmath>
 	<cstdio>
@@ -1923,6 +1927,7 @@
 	<glm/gtc/type_ptr.hpp>
 	<tiny_obj_loader.h>
 	<stb_image.h>
+	<unistd.h>
 	"utils.h"
 	"matrices.h"
 
