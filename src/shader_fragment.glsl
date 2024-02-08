@@ -148,6 +148,8 @@ void main()
             {Kd0 = texture(TextureSpaceship, vec2(U,V)).rgb;}
         else if (object_id == ROCK)
             {Kd0 = texture(TextureRock, vec2(U,V)).rgb;}
+        else if (object_id == ASTEROID)
+            {Kd0 = texture(TextureAsteroid, vec2(U,V)).rgb;}
         else // Objeto desconhecido = preto
         {
             Kd = vec3(0.0,0.0,0.0);

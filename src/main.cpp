@@ -474,7 +474,7 @@ int main(int argc, char* argv[])
         float distanciaMercurioX = 58.0f + tamanhoSol + tamanhoMercurio/2; // Distancia do Sol: 58.000.000 + 1/2 diametro do Sol + 1/2 diametro de Mercurio
         float distanciaVenusX = distanciaMercurioX + 50.0f + tamanhoMercurio/2 + tamanhoVenus/2; // Distancia de Mercurio: 50.000.000 + 1/2 diametro de Mercurio + 1/2 diametro de Venus
         float distanciaTerraX = distanciaVenusX + 41.0f + tamanhoVenus/2 + tamanhoTerra/2; // Distancia da terra
-        float distanciaLuaX = distanciaTerraX + 0.384f + tamanhoTerra/2 + tamanhoLua/2; // Distancia de Lua
+        //float distanciaLuaX = distanciaTerraX + 0.384f + tamanhoTerra/2 + tamanhoLua/2; // Distancia de Lua
         float distanciaMarteX = distanciaTerraX + 78.0f + tamanhoTerra/2 + tamanhoMarte/2; // Distancia de Marte
         float distanciaJupiterX = distanciaMarteX + 550.0f + tamanhoMarte/2 + tamanhoJupiter/2; // Distancia de Jupiter
         float distanciaSaturnoX = distanciaJupiterX + 646.0f + tamanhoJupiter/2 + tamanhoSaturno/2; // Distancia de Saturno
@@ -509,15 +509,15 @@ int main(int argc, char* argv[])
         z = r*cos(g_CameraPhi)*cos(g_CameraTheta);
         x = r*cos(g_CameraPhi)*sin(g_CameraTheta);
         camera_view_vector = glm::vec4(-x,-y,-z,0.0f);
-        glm::vec4 spaceship_position_relative = glm::vec4(0.0f, -5.0f, 0.0f, 1.0f); // 10 unidades à frente da câmera
+        glm::vec4 spaceship_position_relative = glm::vec4(0.0f, -5.0f, 0.25f, 1.0f); // 10 unidades à frente da câmera
 
         // Posição absoluta da nave utilizando a posição da câmera.
         glm::vec4 spaceship_position = camera_position_c + camera_view_vector + spaceship_position_relative;
 
         model = Matrix_Translate(spaceship_position.x, spaceship_position.y, spaceship_position.z) // Posiciona o objeto
                 * Matrix_Rotate_Z(g_CameraPhi)
-                * Matrix_Rotate_X(-g_CameraPhi)
-                * Matrix_Rotate_Y(g_CameraTheta)
+                * Matrix_Rotate_X(-g_CameraPhi -0.1f)
+                * Matrix_Rotate_Y(g_CameraTheta -0.45f)
                 * Matrix_Scale(0.5f,0.5f,0.5f); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, SPACESHIP);
@@ -525,7 +525,19 @@ int main(int argc, char* argv[])
 
         // Rochas:
 
-        model = Matrix_Translate(300.0f, 0.0f, 0.0f) // Posiciona o objeto
+        model = Matrix_Translate(350.0f, 0.0f, 0.0f) // Posiciona o objeto
+                * Matrix_Scale(5,5,5); // Aumenta o objeto
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform, ROCK);
+        DrawVirtualObject("rock");
+
+        model = Matrix_Translate(250.0f, 100.0f, 0.0f) // Posiciona o objeto
+                * Matrix_Scale(10,10,10); // Aumenta o objeto
+        glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(g_object_id_uniform, ROCK);
+        DrawVirtualObject("rock");
+
+        model = Matrix_Translate(375.0f, 0.0f, 200.0f) // Posiciona o objeto
                 * Matrix_Scale(5,5,5); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, ROCK);
@@ -533,11 +545,11 @@ int main(int argc, char* argv[])
 
         // Asteroide:
 
-        model = Matrix_Translate(300.0f, 0.0f, 0.0f) // Posiciona o objeto
+        model = Matrix_Translate(350.0f, 100.0f, 0.0f) // Posiciona o objeto
                 * Matrix_Scale(5,5,5); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, ASTEROID);
-        DrawVirtualObject("rock");
+        DrawVirtualObject("Asteroid");
 
 
         // Mercurio:
@@ -580,15 +592,22 @@ int main(int argc, char* argv[])
 
         /*
         // Lua:
-        angularSpeed = 1.022 / distanciaLuaX;       // Velocidade angular
+        angularSpeed = 1.022f;       // Velocidade angular
+        float moonDistanceFromEarth = 0.384f;
         float angleMoon = angularSpeed * glfwGetTime();   // Ângulo da posição do planeta ao longo da órbita
+
+        // Posição da Lua em relação à Terra, antes de aplicar a translação da Terra
+        glm::mat4 moonRelativePosition = glm::rotate(glm::mat4(1.0f), glm::radians(angleMoon), glm::vec3(0, 1, 0)) // Rotação ao redor da Terra
+                                      * glm::translate(glm::mat4(1.0f), glm::vec3(moonDistanceFromEarth, 0, 0)); // Distância da Terra
+
+        // Aplica a posição da Terra à Lua para que a Lua siga a Terra
+        glm::mat4 earthPosition = Matrix_Translate(distanciaTerraX * cos(anglePlanet), 0.0f, distanciaTerraX * sin(anglePlanet));
+        glm::mat4 moonPosition = earthPosition * moonRelativePosition;
+
         // Posiciona o objeto em uma órbita circular
-        model = Matrix_Translate(distanciaTerraX * cos(anglePlanet), 0.0f, distanciaTerraX * sin(anglePlanet)) // Começa com a transformação da Terra
-                * Matrix_Translate(distanciaLuaX * cos(angleMoon), 0.0f, distanciaLuaX * sin(angleMoon)) // Desloca a Lua em relação à Terra
-                * Matrix_Rotate_Y((float)glfwGetTime() * 0.1f)
-                * Matrix_Scale(tamanhoLua,tamanhoLua,tamanhoLua); // Escala da Lua
+        model = moonPosition * Matrix_Scale(tamanhoLua,tamanhoLua,tamanhoLua);
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(g_object_id_uniform, TERRA);
+        glUniform1i(g_object_id_uniform, SOL);
         DrawVirtualObject("the_sphere");*/
 
         // Marte:
@@ -618,14 +637,17 @@ int main(int argc, char* argv[])
         // Saturn:
         angularSpeed = 9.69 / distanciaSaturnoX;       // Velocidade angular
         anglePlanet = angularSpeed * glfwGetTime();   // Ângulo da posição do planeta ao longo da órbita
+        float saturnX = distanciaSaturnoX * cos(anglePlanet);
+        float saturnZ = distanciaSaturnoX * sin(anglePlanet);
         // Posiciona o objeto em uma órbita circular
-        model = Matrix_Translate(distanciaSaturnoX * cos(anglePlanet), 0.0f, distanciaSaturnoX * sin(anglePlanet))
+        model = Matrix_Translate(saturnX, 0.0f, saturnZ)
                 * Matrix_Rotate_X(0.2f)
                 * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f)
                 * Matrix_Scale(tamanhoSaturno,tamanhoSaturno,tamanhoSaturno); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform,SATURNO);
         DrawVirtualObject("the_sphere");
+
 
         // Urano:
         angularSpeed = 6.81 / distanciaUranoX;       // Velocidade angular
@@ -862,6 +884,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureSkybox"), 9);
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureSpaceship"), 10);
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureRock"), 11);
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureAsteroid"), 12);
     glUseProgram(0);
 }
 
