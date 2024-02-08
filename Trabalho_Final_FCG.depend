@@ -1899,7 +1899,11 @@
 	<inttypes.h>
 	<stdint.h>
 
+<<<<<<< HEAD
 1707220572 source:c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\src\main.cpp
+=======
+1707360951 source:c:\users\laisa\onedrive\documentos\ufrgs\quarto semestre\fcg\trabalho final\inf01047-fcg-trabalho-final\src\main.cpp
+>>>>>>> new-object
 	<cmath>
 	<cstdio>
 	<cstdlib>
