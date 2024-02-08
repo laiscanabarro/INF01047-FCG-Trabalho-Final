@@ -35,6 +35,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+#include <unistd.h> //sleep
+
 // Headers locais, definidos na pasta "include/"
 #include "utils.h"
 #include "matrices.h"
@@ -141,6 +143,8 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+
+glm::vec3 Bezier(float t, glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3);
 
 // Definimos uma estrutura que armazenará dados necessários para renderizar
 // cada objeto da cena virtual.
@@ -468,7 +472,7 @@ int main(int argc, char* argv[])
         float tamanhoSaturno = 116.460f; // Diâmetro: 116.460 KM
         float tamanhoUrano = 50.724f;   // Diâmetro: 50.724 KM
         float tamanhoNetuno = 49.244f;  // Diâmtro: 49.244 KM
-        float tamanhoLua = 3.474f; // Diâmetro: 3.474 km
+        //float tamanhoLua = 3.474f; // Diâmetro: 3.474 km
 
         // Conversão de distancias: 1.0f = 1.000.000 KM
         float distanciaMercurioX = 58.0f + tamanhoSol + tamanhoMercurio/2; // Distancia do Sol: 58.000.000 + 1/2 diametro do Sol + 1/2 diametro de Mercurio
@@ -504,7 +508,7 @@ int main(int argc, char* argv[])
         DrawVirtualObject("the_sphere");
 
         // Nave:
-        r = 20.0f;
+        r = 20.0f; // Distância da camera
         y = r*sin(g_CameraPhi);
         z = r*cos(g_CameraPhi)*cos(g_CameraTheta);
         x = r*cos(g_CameraPhi)*sin(g_CameraTheta);
@@ -514,7 +518,16 @@ int main(int argc, char* argv[])
         // Posição absoluta da nave utilizando a posição da câmera.
         glm::vec4 spaceship_position = camera_position_c + camera_view_vector + spaceship_position_relative;
 
-        model = Matrix_Translate(spaceship_position.x, spaceship_position.y, spaceship_position.z) // Posiciona o objeto
+
+        glm::vec3 p0(spaceship_position.x, spaceship_position.y, spaceship_position.z); // Ponto inicial
+        glm::vec3 p1(spaceship_position.x, spaceship_position.y + 0.15f, spaceship_position.z); // Primeiro ponto de controle
+        glm::vec3 p2(spaceship_position.x, spaceship_position.y + 0.10f, spaceship_position.z); // Segundo ponto de controle
+        glm::vec3 p3(spaceship_position.x, spaceship_position.y + 0.05f, spaceship_position.z); // Ponto final
+
+        float t = fmod(glfwGetTime(), 1.5f); // Isso faz com que 't' varie de 0 a 1 repetidamente
+        glm::vec3 position = Bezier(t, p0, p1, p2, p3);
+
+        model = Matrix_Translate(position.x, position.y, position.z) // Posiciona o objeto
                 * Matrix_Rotate_Z(g_CameraPhi)
                 * Matrix_Rotate_X(-g_CameraPhi -0.1f)
                 * Matrix_Rotate_Y(g_CameraTheta -0.45f)
@@ -522,6 +535,7 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, SPACESHIP);
         DrawVirtualObject("Cube");
+
 
         // Rochas:
 
@@ -545,7 +559,15 @@ int main(int argc, char* argv[])
 
         // Asteroide:
 
-        model = Matrix_Translate(350.0f, 100.0f, 0.0f) // Posiciona o objeto
+        glm::vec3 p4(350.0f, 100.0f, 100.0f); // Ponto inicial
+        glm::vec3 p5(450.0f, 300.0f, 200.0f); // Primeiro ponto de controle
+        glm::vec3 p6(550.0f, -100.0f, 300.0f); // Segundo ponto de controle
+        glm::vec3 p7(650.0f, 100.0f, 400.0f); // Ponto final
+
+        t = fmod(glfwGetTime(), 15.0f); // Isso faz com que 't' varie de 0 a 15 repetidamente
+        position = Bezier(t, p4, p5, p6, p7);
+
+        model = Matrix_Translate(position.x, position.y, position.z) // Posiciona o objeto
                 * Matrix_Scale(5,5,5); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, ASTEROID);
@@ -1924,6 +1946,23 @@ void PrintObjModelInfo(ObjModel* model)
     printf("\n");
   }
 }
+
+//FONTE: ChatGPT
+glm::vec3 Bezier(float t, glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
+    float u = 1 - t;
+    float tt = t * t;
+    float uu = u * u;
+    float uuu = uu * u;
+    float ttt = tt * t;
+
+    glm::vec3 p = uuu * p0; // Primeiro termo
+    p += 3 * uu * t * p1; // Segundo termo
+    p += 3 * u * tt * p2; // Terceiro termo
+    p += ttt * p3; // Quarto termo
+
+    return p;
+}
+
 
 
 // set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null
