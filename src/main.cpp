@@ -564,7 +564,7 @@ int main(int argc, char* argv[])
         glm::vec3 p6(550.0f, -100.0f, 300.0f); // Segundo ponto de controle
         glm::vec3 p7(650.0f, 100.0f, 400.0f); // Ponto final
 
-        t = fmod(glfwGetTime(), 15.0f); // Isso faz com que 't' varie de 0 a 15 repetidamente
+        t = fmod(glfwGetTime(), 40.0f); // Isso faz com que 't' varie de 0 a 15 repetidamente
         position = Bezier(t, p4, p5, p6, p7);
 
         model = Matrix_Translate(position.x, position.y, position.z) // Posiciona o objeto
@@ -1947,20 +1947,12 @@ void PrintObjModelInfo(ObjModel* model)
   }
 }
 
-//FONTE: ChatGPT
+//FONTE: ajuda do ChatGPT
 glm::vec3 Bezier(float t, glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
-    float u = 1 - t;
-    float tt = t * t;
-    float uu = u * u;
-    float uuu = uu * u;
-    float ttt = tt * t;
-
-    glm::vec3 p = uuu * p0; // Primeiro termo
-    p += 3 * uu * t * p1; // Segundo termo
-    p += 3 * u * tt * p2; // Terceiro termo
-    p += ttt * p3; // Quarto termo
-
-    return p;
+    return (1 - t) * (1 - t) * (1 - t) * p0 +
+           3 * (1 - t) * (1 - t) * t * p1 +
+           3 * (1 - t) * t * t * p2 +
+           t * t * t * p3;
 }
 
 
