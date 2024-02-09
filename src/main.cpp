@@ -737,45 +737,56 @@ int main(int argc, char* argv[])
         float current_time = (float)glfwGetTime();
         float delta_t = current_time - prev_time;
         prev_time = current_time;
+        float rebound = 10.0f;
 
         // Movimenta��o de objetos a partir das teclas pressionadas
         if (g_WPressed)
         {
-            camera_movement += -vetor_w * speed * delta_t;
+            if (g_Collision)
+                camera_movement += vetor_w * speed * delta_t * rebound;
+            else
+                camera_movement += -vetor_w * speed * delta_t;
         }
 
         if (g_APressed)
         {
-            camera_movement += -vetor_u * speed * delta_t;
+            if (g_Collision)
+                camera_movement += vetor_u * speed * delta_t * rebound;
+            else
+                camera_movement += -vetor_u * speed * delta_t;
         }
 
         if (g_SPressed)
         {
-            camera_movement += vetor_w * speed * delta_t;
+            if (g_Collision)
+                camera_movement += -vetor_w * speed * delta_t * rebound;
+            else
+                camera_movement += vetor_w * speed * delta_t;
         }
 
         if (g_DPressed)
         {
-            camera_movement += vetor_u * speed * delta_t;
+            if (g_Collision)
+                camera_movement += -vetor_u * speed * delta_t * rebound;
+            else
+                camera_movement += vetor_u * speed * delta_t;
         }
 
         if (g_SpacePressed)
         {
-            camera_movement += camera_up_vector * speed * delta_t;
+            if (g_Collision)
+                camera_movement += -camera_up_vector * speed * delta_t * rebound;
+            else
+                camera_movement += camera_up_vector * speed * delta_t;
         }
 
         if (g_ShiftPressed)
         {
-            camera_movement += -camera_up_vector * speed * delta_t;
+            if (g_Collision)
+                camera_movement += camera_up_vector * speed * delta_t * rebound;
+            else
+                camera_movement += -camera_up_vector * speed * delta_t;
         }
-
-        /*if (g_Collision)
-        {
-            camera_movement = glm::vec4(0.0f,0.0f,0.0f,0.0f);
-        //    spaceship_position = glm::vec4(0.0f, -5.0f, 0.25f, 1.0f);
-
-            g_Collision = false;
-        }*/
 
         // O framebuffer onde OpenGL executa as opera��es de renderiza��o n�o
         // � o mesmo que est� sendo mostrado para o usu�rio, caso contr�rio
