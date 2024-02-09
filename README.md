@@ -36,7 +36,7 @@ Foi utlizado para auxílio em questões pontuais do código e como base para o d
   - Implementação da curva de Bézier;
   - Ajustes na animação dos planetas.
 
-- Exemplo do que o ChatGPT conseguir ajudar:
+- Exemplo do que o ChatGPT não conseguiu ajudar:
   - Não conseguiu ajudar na implementação da Skybox de forma coerente com o projeto;
   - Não ajudou no controle da nave, que se movimenta junto com a movimentação do mouse.
 
