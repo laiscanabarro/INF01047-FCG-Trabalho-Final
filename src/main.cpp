@@ -143,7 +143,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-void Collided();
+bool CollisionCheck(glm::vec4 obj1, glm::vec4 obj2);
 
 glm::vec3 Bezier(float t, glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3);
 
@@ -204,7 +204,7 @@ bool g_Collision = false;
 // renderizaï¿½ï¿½o.
 float g_CameraTheta = 0.0f; // ï¿½ngulo no plano ZX em relaï¿½ï¿½o ao eixo Z
 float g_CameraPhi = 0.0f;   // ï¿½ngulo em relaï¿½ï¿½o ao eixo Y
-float g_CameraDistance = 1000.0f; // Distï¿½ncia da cï¿½mera para a origem
+float g_CameraDistance = 1.0f; // Distï¿½ncia da cï¿½mera para a origem
 
 // Variï¿½veis que controlam rotaï¿½ï¿½o do antebraï¿½o
 float g_ForearmAngleZ = 0.0f;
@@ -237,7 +237,7 @@ float f_r = g_CameraDistance;
 float f_y = f_r*sin(g_CameraPhi);
 float f_z = f_r*cos(g_CameraPhi)*cos(g_CameraTheta);
 float f_x = f_r*cos(g_CameraPhi)*sin(g_CameraTheta);
-glm::vec4 camera_movement = glm::vec4(0.0f,0.0f,0.0f,0.0f);
+glm::vec4 camera_movement = glm::vec4(0.0f,0.0f,1000.0f,0.0f);
 
 float angle=0.0;
 
@@ -381,7 +381,7 @@ int main(int argc, char* argv[])
         // Conversaremos sobre sistemas de cores nas aulas de Modelos de Iluminaï¿½ï¿½o.
         //
         //           R     G     B     A
-        glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         // "Pintamos" todos os pixels do framebuffer com a cor definida acima,
         // e tambï¿½m resetamos todos os pixels do Z-buffer (depth buffer).
@@ -445,6 +445,7 @@ int main(int argc, char* argv[])
         }
 
         glm::mat4 model = Matrix_Identity(); // Transformaï¿½ï¿½o identidade de modelagem
+        glm::vec4 modelPosition;
 
         // Enviamos as matrizes "view" e "projection" para a placa de vï¿½deo
         // (GPU). Veja o arquivo "shader_vertex.glsl", onde estas sï¿½o
@@ -499,17 +500,23 @@ int main(int argc, char* argv[])
                 * Matrix_Scale(farplane/2,farplane/2,farplane/2); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, SKYBOX);
-        DrawVirtualObject("the_sphere");
+        //DrawVirtualObject("the_sphere");
 
         glDepthFunc(GL_LESS); // Ativa de novo o Z-buffer
 
         // Sol:
         // Centro da projeï¿½ï¿½o
-        model = Matrix_Translate(-5.0f,0.0f,0.0f) // Posiciona o objeto
+        model = Matrix_Translate(0.0f,0.0f,0.0f) // Posiciona o objeto
                 * Matrix_Scale(tamanhoSol,tamanhoSol,tamanhoSol); // Aumenta o objeto
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, SOL);
         DrawVirtualObject("the_sphere");
+
+        // Calculo de posicao para colisao do Sol:
+        modelPosition.x = 1.0f; 
+        modelPosition.y = 1.0f; 
+        modelPosition.z = 1.0f;
+        modelPosition.r = tamanhoSol; // Raio do sol para calculo de colisao
 
         // Nave:
         r = 20.0f; // Distï¿½ncia da camera
@@ -522,7 +529,6 @@ int main(int argc, char* argv[])
         // Posiï¿½ï¿½o absoluta da nave utilizando a posiï¿½ï¿½o da cï¿½mera.
         glm::vec4 spaceship_position = camera_position_c + camera_view_vector + spaceship_position_relative;
 
-
         glm::vec3 p0(spaceship_position.x, spaceship_position.y, spaceship_position.z); // Ponto inicial
         glm::vec3 p1(spaceship_position.x, spaceship_position.y + 0.15f, spaceship_position.z); // Primeiro ponto de controle
         glm::vec3 p2(spaceship_position.x, spaceship_position.y + 0.10f, spaceship_position.z); // Segundo ponto de controle
@@ -530,6 +536,14 @@ int main(int argc, char* argv[])
 
         float t = fmod(glfwGetTime(), 1.5f); // Isso faz com que 't' varie de 0 a 1 repetidamente
         glm::vec3 position = Bezier(t, p0, p1, p2, p3);
+
+        glm::vec4 spaceship_collision_position;
+        spaceship_collision_position.x = camera_movement.x;
+        spaceship_collision_position.y = camera_movement.y;
+        spaceship_collision_position.z = camera_movement.z;
+        spaceship_collision_position.r = r; // Distancia da nave pra camera
+
+        CollisionCheck(spaceship_collision_position, modelPosition);
 
         model = Matrix_Translate(position.x, position.y, position.z) // Posiciona o objeto
                 * Matrix_Rotate_Z(g_CameraPhi)
@@ -581,6 +595,7 @@ int main(int argc, char* argv[])
         // Mercurio:
         angularSpeed = 47.87f / distanciaMercurioX;    // Velocidade angular
         anglePlanet = angularSpeed * glfwGetTime();    // ï¿½ngulo da posiï¿½ï¿½o do planeta ao longo da ï¿½rbita
+
         // Posiciona o objeto em uma ï¿½rbita circular
         model = Matrix_Translate(distanciaMercurioX * cos(anglePlanet), 0.0f, distanciaMercurioX * sin(anglePlanet))
                 * Matrix_Rotate_Z(0.6f)
@@ -590,6 +605,14 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(g_model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(g_object_id_uniform, MERCURIO);
         DrawVirtualObject("the_sphere");
+
+        // Calculo de posicao para colisao:
+        modelPosition.x = distanciaMercurioX * cos(anglePlanet); 
+        modelPosition.y = 0.0f; 
+        modelPosition.z = distanciaMercurioX * sin(anglePlanet);
+        modelPosition.r = tamanhoMercurio; // Raio
+
+        //CollisionCheck(spaceship_position, modelPosition);
 
         // Venus:
         angularSpeed = 35.02f / distanciaVenusX;       // Velocidade angular
@@ -746,13 +769,13 @@ int main(int argc, char* argv[])
             camera_movement += -camera_up_vector * speed * delta_t;
         }
 
-        if (g_Collision)
+        /*if (g_Collision)
         {
             camera_movement = glm::vec4(0.0f,0.0f,0.0f,0.0f);
         //    spaceship_position = glm::vec4(0.0f, -5.0f, 0.25f, 1.0f);
 
             g_Collision = false;
-        }
+        }*/
 
         // O framebuffer onde OpenGL executa as operaï¿½ï¿½es de renderizaï¿½ï¿½o nï¿½o
         // ï¿½ o mesmo que estï¿½ sendo mostrado para o usuï¿½rio, caso contrï¿½rio
@@ -1732,7 +1755,10 @@ void TextRendering_ShowEulerAngles(GLFWwindow* window)
     float pad = TextRendering_LineHeight(window);
 
     char buffer[80];
-    snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
+    if(g_Collision)
+        snprintf(buffer, 80, "Collision");
+    else
+        snprintf(buffer, 80, "X: %f; Y: %f; Z: %f", camera_movement.x, camera_movement.y, camera_movement.z);
 
     TextRendering_PrintString(window, buffer, -1.0f+pad/10, -1.0f+2*pad/10, 1.0f);
 }
@@ -1971,4 +1997,21 @@ glm::vec3 Bezier(float t, glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3
     p += ttt * p3; // Quarto termo
 
     return p;
+}
+
+bool CollisionCheck(glm::vec4 obj1, glm::vec4 obj2)
+{
+
+    float distance = sqrt(
+        (obj1.x - obj2.x) * (obj1.x - obj2.x) + 
+        (obj1.y - obj2.y) * (obj1.y - obj2.y) + 
+        (obj1.z - obj2.z) * (obj1.z - obj2.z)
+    ); // Calcula a distancia entre os dois objetos.
+
+    if (distance < (obj1.r + obj2.r)) // True se a distancia do raio entre os dois objetos é menor que a distancia propria, ou seja, colidiu
+        g_Collision = true;
+    else
+        g_Collision = false;
+
+    return g_Collision;
 }

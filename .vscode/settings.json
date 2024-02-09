@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "__node_handle": "cpp"
     }
 }
