@@ -40,8 +40,8 @@ Em  geral, os passos desenvolvidos, em sequência, foram:
   - curva de Bezier.
 
 ### Funcionamento da aplicação:
-![Cenário inicial](laiscanabarro/INF01047-FCG-Trabalho-Final/blob/main/imagens/cap1.png)
-![Vizualização dos planetas](laiscanabarro/INF01047-FCG-Trabalho-Final/blob/main/imagens/cap1.png)
+![Cenário inicial](images/cap1.png)
+![Vizualização dos planetas](images/cap2.png)
     
 ### Manual:
 - Teclado:
