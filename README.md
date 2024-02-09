@@ -40,8 +40,8 @@ Em  geral, os passos desenvolvidos, em sequência, foram:
   - curva de Bezier.
 
 ### Funcionamento da aplicação:
-![Exemplo]([https://example.com/image.png](https://github.com/laiscanabarro/INF01047-FCG-Trabalho-Final/blob/main/imagens/cap1.png))
-![Exemplo]([https://example.com/image.png](https://github.com/laiscanabarro/INF01047-FCG-Trabalho-Final/blob/main/imagens/cap2.png))
+![Cenário inicial](laiscanabarro/INF01047-FCG-Trabalho-Final/blob/main/imagens/cap1.png)
+![Vizualização dos planetas](laiscanabarro/INF01047-FCG-Trabalho-Final/blob/main/imagens/cap1.png)
     
 ### Manual:
 - Teclado:
