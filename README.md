@@ -2,6 +2,7 @@
 Repositório para o Trabalho Final da disciplina de Fundamentos de Computação Gráfica.
 
 Alunos: 
+
 Laís Fernanda Canabarro Araujo
 
 Leonardo Dalpian Dutra
