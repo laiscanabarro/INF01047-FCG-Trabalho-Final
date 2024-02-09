@@ -3,6 +3,7 @@ Repositório para o Trabalho Final da disciplina de Fundamentos de Computação 
 
 Alunos: 
 Laís Fernanda Canabarro Araujo
+
 Leonardo Dalpian Dutra
 
 Ideia inical: Planejamos desenvolver uma aplicação gráfica interativa de exploração espacial pelo Sistema Solar. A proposta consiste em criar modelos realistas para os planetas, luas e outros corpos celestes, permitindo aos usuários explorar o espaço de forma intuitiva. 
@@ -39,8 +40,8 @@ Em  geral, os passos desenvolvidos, em sequência, foram:
   - curva de Bezier.
 
 ### Funcionamento da aplicação:
-imagens aqui
-![Exemplo](https://example.com/image.png)
+![Exemplo]([https://example.com/image.png](https://github.com/laiscanabarro/INF01047-FCG-Trabalho-Final/blob/main/imagens/cap1.png))
+![Exemplo]([https://example.com/image.png](https://github.com/laiscanabarro/INF01047-FCG-Trabalho-Final/blob/main/imagens/cap2.png))
     
 ### Manual:
 - Teclado:
