@@ -9,6 +9,8 @@ Leonardo Dalpian Dutra
 
 Ideia inical: Planejamos desenvolver uma aplicação gráfica interativa de exploração espacial pelo Sistema Solar. A proposta consiste em criar modelos realistas para os planetas, luas e outros corpos celestes, permitindo aos usuários explorar o espaço de forma intuitiva. 
 
+---
+
 ### Contribuição de cada membro da dupla para o trabalho:
 
 Laís implementou os seguintes requisitos:
