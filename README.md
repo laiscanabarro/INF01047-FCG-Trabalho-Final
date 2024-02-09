@@ -33,8 +33,6 @@ Leonardo implementou os seguintes requisitos:
 ### Uso do ChatGPT: 
 Foi utlizado para auxílio em questões pontuais do código e como base para o desenvolvimento da função da curva de Bezier.
 
- para desenvolvimento do trabalho, descrevendo como a ferramenta foi utilizada e para quais partes do trabalho. O parágrafo deve também incluir uma análise crítica descrevendo quão útil a dupla achou a ferramenta, onde ela auxiliou e onde ela não auxiliou adequadamente;
-
 - Pontos em que o ChatGPT ajudou:
   - Implementação da curva de Bézier;
   - Ajustes na animação dos planetas.
