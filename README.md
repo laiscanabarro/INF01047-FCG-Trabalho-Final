@@ -56,8 +56,13 @@ Em  geral, os passos desenvolvidos, em sequência, foram:
   - curva de Bezier.
 
 ### Funcionamento da aplicação:
+Imagem inicial da aplicação:
+
 ![Cenário inicial](images/cap1.png)
-![Vizualização dos planetas](images/cap2.png)
+
+Visualização do restante dos planetas:
+
+![Visualização dos planetas](images/cap2.png)
     
 ### Manual:
 - Teclado:
